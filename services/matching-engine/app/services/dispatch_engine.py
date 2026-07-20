@@ -6,22 +6,36 @@ and trip cancellation logic.  All method bodies are intentionally
 left empty for downstream implementation.
 """
 
-from app.models.schemas import LocationUpdate
+from app.models.schemas import ( RideType, TripStatus, LocationUpdate, MatchRequest, TripState )
 
 
 class DispatchEngine:
     """Orchestrates rider-driver matching and trip lifecycle events."""
 
-    async def find_match(self, rider_id: str) -> None:
+    async def find_match(self, new_match_request: MatchRequest) -> TripState:
         """Locate the best available driver for the given rider.
 
         Args:
-            rider_id: Unique identifier of the rider requesting a match.
+            new_match_request: contract for a rider requesting a match.
 
-        Raises:
-            NotImplementedError: Method not yet implemented.
         """
-        raise NotImplementedError
+        print(f"Rider {new_match_request.rider_id} is Requesting a Driver!")
+
+        trip_instance = TripState(
+            trip_id = new_match_request.rider_id, # Some UNIQUE TRIP ID
+            rider_id = new_match_request.rider_id,
+            status = TripStatus.PENDING,
+            pickup_latitude = new_match_request.pickup_latitude,
+            pickup_longitude = new_match_request.pickup_longitude,
+            dropoff_latitude = new_match_request.dropoff_latitude,
+            dropoff_longitude = new_match_request.dropoff_longitude,
+            ride_type = new_match_request.ride_type,
+            created_at = new_match_request.requested_at,
+        )
+
+        # Query Closest Available Driver to fill in trip_instance( driver_id = X)
+        # 
+        return trip_instance
 
     async def update_driver_location(self, update: LocationUpdate) -> None:
         """Persist a real-time GPS update from a driver.
