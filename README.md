@@ -1,6 +1,6 @@
 # DispatchMesh
 
-  ### Project Structure
+### Project Structure
 ```
     DispatchMesh/
     ├── docker-compose.yml          # Orchestrates all 4 containers
@@ -32,3 +32,7 @@
             │   └── broker.py          # Redis broker (empty stubs)
             └── db/connection.py    # DB connection loader (empty stub)
 ```
+
+### AI Integration
+- Dynamic Surge Pricing Predictor: A small regression model or microservice that adjusts fare prices based on simulated driver supply and rider demand in a specific geographical zone.
+- ETA Estimation Model: An internal service that uses historical trip duration data to predict delivery or pickup times more accurately than a simple distance calculation.
