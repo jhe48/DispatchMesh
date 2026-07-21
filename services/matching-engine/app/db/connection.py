@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Module-level variable for Singleton Pattern
-global _connection = None
+_connection = None
 
 def get_connection():
     """Create and return a psycopg2 database connection.
@@ -29,6 +29,7 @@ def get_connection():
     """
 
     # TODO: build and return a psycopg2 connection using env vars.
+    global _connection
     if not _connection:
         try:
             postgres_connection = psycopg2.connect(
@@ -54,6 +55,8 @@ def get_connection():
 def close_connection():
     """Closes psycopg2 database connection.
     """
+    global _connection
+    _connection.close()
     _connection = None
 
 
@@ -76,22 +79,16 @@ async def initialize_database() -> None:
         CREATE INDEX idx_drivers_location
         ON drivers USING GIST (geom);
     ''')
-    try:
-        conn = get_connection()
-        cur = conn.cursor()
-        try: 
+    global _connection
+    if _connection:
+        cur = _connection.cursor()
+        try:
             cur.execute(create_driver_table)    
             cur.execute(gist_index)
         except Exception as e:
             print(f"Cannot Execute SQL: {e}")
-        finally:
+        finally: 
             if "cur" in locals():
                 cur.close()
-            if "conn" in locals():
-                conn.close()
-    except psycopg2.OperationalError as e:
-        print(f"Operational Error Occurred: {e}")
-    except psycopg2.Error as e:
-        print(f"Generic Database Error: {e}")
-    except Exception as e:
-        print(f"Unexpected Non-Databse Error Occurred: {e}")
+    else:
+        print("Database Connection NOT Established...")

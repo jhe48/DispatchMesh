@@ -23,7 +23,7 @@ async def _on_startup() -> None:
     TODO: implement actual startup logic.
     """
     get_connection()
-    initialize_database()
+    await initialize_database()
 
 
 async def _on_shutdown() -> None:
@@ -31,7 +31,7 @@ async def _on_shutdown() -> None:
 
     TODO: implement actual shutdown logic.
     """
-    close_connection
+    close_connection()
 
 
 @asynccontextmanager
