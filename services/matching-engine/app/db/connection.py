@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Module-level variable for Singleton Pattern
+global _connection = None
 
 def get_connection():
     """Create and return a psycopg2 database connection.
@@ -27,22 +29,33 @@ def get_connection():
     """
 
     # TODO: build and return a psycopg2 connection using env vars.
-    try:
-        postgres_connection = psycopg2.connect(
-            host=os.getenv("POSTGRES_HOST"),
-            port=os.getenv("POSTGRES_PORT"),
-            dbname=os.getenv("POSTGRES_DB"),
-            user=os.getenv("POSTGRES_USER"),
-            password=os.getenv("POSTGRES_PASSWORD")
-        )
-        postgres_connection.autocommit = True
-        return postgres_connection
-    except psycopg2.OperationalError as e:
-        print(f"Operational Error Occurred: {e}")
-    except psycopg2.Error as e:
-        print(f"Generic Database Error: {e}")
-    except Exception as e:
-        print(f"Unexpected Non-Databse Error Occurred: {e}")
+    if not _connection:
+        try:
+            postgres_connection = psycopg2.connect(
+                host=os.getenv("POSTGRES_HOST"),
+                port=os.getenv("POSTGRES_PORT"),
+                dbname=os.getenv("POSTGRES_DB"),
+                user=os.getenv("POSTGRES_USER"),
+                password=os.getenv("POSTGRES_PASSWORD")
+            )
+            postgres_connection.autocommit = True
+            _connection = postgres_connection
+            return _connection
+        except psycopg2.OperationalError as e:
+            print(f"Operational Error Occurred: {e}")
+        except psycopg2.Error as e:
+            print(f"Generic Database Error: {e}")
+        except Exception as e:
+            print(f"Unexpected Non-Databse Error Occurred: {e}")
+    else:
+        return _connection
+
+
+def close_connection():
+    """Closes psycopg2 database connection.
+    """
+    _connection = None
+
 
 async def initialize_database() -> None:
     """Run any one-time database setup (migrations, table creation, etc.).

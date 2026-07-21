@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import uvicorn
 
-from app.db.connection import initialize_database
+from app.db.connection import ( get_connection, initialize_database, close_connection )
 from app.services.broker import get_redis_client
 
 
@@ -22,7 +22,8 @@ async def _on_startup() -> None:
 
     TODO: implement actual startup logic.
     """
-    pass
+    get_connection()
+    initialize_database()
 
 
 async def _on_shutdown() -> None:
@@ -30,7 +31,7 @@ async def _on_shutdown() -> None:
 
     TODO: implement actual shutdown logic.
     """
-    pass
+    close_connection
 
 
 @asynccontextmanager
