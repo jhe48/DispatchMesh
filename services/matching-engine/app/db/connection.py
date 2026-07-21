@@ -27,14 +27,21 @@ def get_connection():
     """
 
     # TODO: build and return a psycopg2 connection using env vars.
-    postgres_connection = psycopg2.connect(
-        host=os.getenv("POSTGRES_HOST"),
-        port=os.getenv("POSTGRES_PORT"),
-        dbname=os.getenv("POSTGRES_DB"),
-        user=os.getenv("POSTGRES_USER"),
-        password=os.getenv("POSTGRES_PASSWORD")
-    )
-    return postgres_connection
+    try:
+        postgres_connection = psycopg2.connect(
+            host=os.getenv("POSTGRES_HOST"),
+            port=os.getenv("POSTGRES_PORT"),
+            dbname=os.getenv("POSTGRES_DB"),
+            user=os.getenv("POSTGRES_USER"),
+            password=os.getenv("POSTGRES_PASSWORD")
+        )
+        postgres_connection.autocommit = True
+        return postgres_connection
+    except Exception as e:
+        print(f"An Error Occured with Database Connection: {e}")
+    finally: 
+        if 'postgres_connection' in locals(): 
+            postgres_connection.close()
 
 async def initialize_database() -> None:
     """Run any one-time database setup (migrations, table creation, etc.).
@@ -59,4 +66,3 @@ async def initialize_database() -> None:
     cur = conn.cursor()
     cur.execute(create_driver_table)
     cur.execute(gist_index)
-    conn.commit()
