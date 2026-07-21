@@ -37,11 +37,12 @@ def get_connection():
         )
         postgres_connection.autocommit = True
         return postgres_connection
+    except psycopg2.OperationalError as e:
+        print(f"Operational Error Occurred: {e}")
+    except psycopg2.Error as e:
+        print(f"Generic Database Error: {e}")
     except Exception as e:
-        print(f"An Error Occured with Database Connection: {e}")
-    finally: 
-        if 'postgres_connection' in locals(): 
-            postgres_connection.close()
+        print(f"Unexpected Non-Databse Error Occurred: {e}")
 
 async def initialize_database() -> None:
     """Run any one-time database setup (migrations, table creation, etc.).
@@ -62,7 +63,22 @@ async def initialize_database() -> None:
         CREATE INDEX idx_drivers_location
         ON drivers USING GIST (geom);
     ''')
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(create_driver_table)
-    cur.execute(gist_index)
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        try: 
+            cur.execute(create_driver_table)    
+            cur.execute(gist_index)
+        except Exception as e:
+            print(f"Cannot Execute SQL: {e}")
+        finally:
+            if "cur" in locals():
+                cur.close()
+            if "conn" in locals():
+                conn.close()
+    except psycopg2.OperationalError as e:
+        print(f"Operational Error Occurred: {e}")
+    except psycopg2.Error as e:
+        print(f"Generic Database Error: {e}")
+    except Exception as e:
+        print(f"Unexpected Non-Databse Error Occurred: {e}")
