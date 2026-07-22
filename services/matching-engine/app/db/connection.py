@@ -66,17 +66,17 @@ async def initialize_database() -> None:
     TODO: implement database initialisation logic.
     """
     create_driver_table = ('''
-    CREATE TABLE IF NOT EXISTS drivers (
-        driver_id SERIAL PRIMARY KEY,
-        geom GEOMETRY(Point, 4326),
-        heading FLOAT DEFAULT NULL, 
-        speed FLOAT DEFAULT NULL,
-        status VARCHAR(100),
-        timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+        CREATE TABLE IF NOT EXISTS drivers (
+            driver_id SERIAL PRIMARY KEY,
+            geom GEOMETRY(Point, 4326),
+            heading FLOAT DEFAULT NULL, 
+            speed FLOAT DEFAULT NULL,
+            status VARCHAR(100),
+            timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
     ''')
     gist_index = ('''
-        CREATE INDEX idx_drivers_location
+        CREATE INDEX IF NOT EXISTS idx_drivers_location
         ON drivers USING GIST (geom);
     ''')
     global _connection
