@@ -44,7 +44,7 @@ class DispatchEngine:
 
         cur.execute("""
             SELECT driver_id 
-            FROM drivers 
+            FROM Drivers 
             WHERE status = %s 
             ORDER BY ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326)) 
             LIMIT 1;""", 
@@ -61,11 +61,23 @@ class DispatchEngine:
             trip_instance.status = TripStatus.MATCHED
             trip_instance.updated_at = datetime.utcnow()
             cur.execute("""
-                UPDATE drivers 
+                UPDATE Drivers 
                 SET status = %s 
                 WHERE driver_id = %s;""", 
                 (query_driver_status_matched, 
                 closest_available_driver[0]))
+            cur.execute("""
+                INSERT INTO Trips (trip_id, rider_id, driver_id, status, pickup_location, dropoff_location, ride_type, created_at, updated_at)
+                VALUES (%s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326), ST_SetSRID(ST_MakePoint(%s, %s), 4326), %s, %s, %s);""", 
+                (trip_instance.trip_id, 
+                 trip_instance.rider_id, 
+                 trip_instance.driver_id,
+                 trip_instance.status,
+                 trip_instance.pickup_longitude, trip_instance.pickup_latitude,
+                 trip_instance.dropoff_longitude, trip_instance.dropoff_latitude, 
+                 trip_instance.ride_type,
+                 trip_instance.created_at,
+                 trip_instance.updated_at))
             return trip_instance
         except Exception as e:
             print(f"Database Error during Matching: {e}")
@@ -80,10 +92,22 @@ class DispatchEngine:
         Args:
             update: A LocationUpdate payload containing coordinates and metadata.
 
-        Raises:
-            NotImplementedError: Method not yet implemented.
         """
-        raise NotImplementedError
+        print(f"Updating Driver {update.driver_id}'s Location...")
+        conn = get_connection()
+        cur = conn.cursor()
+        try: 
+            cur.execute("""
+                UPDATE Drivers
+                SET geom = ST_SetSRID(ST_MakePoint(%s, %s), 4326)
+                WHERE driver_id = %s;""",
+                (update.longitude, update.latitude, update.driver_id))
+            print(f"Driver {update.driver_id}'s Location is Updated!")
+        except Exception as e:
+            print(f"Database Error during Matching: {e}")
+        finally:
+            if 'cur' in locals():
+                cur.close()
 
     async def cancel_trip(self, trip_id: str) -> None:
         """Cancel an active trip and release the assigned driver.
