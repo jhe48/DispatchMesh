@@ -6,7 +6,7 @@ DispatchMesh platform, translated to idiomatic Python (snake_case,
 Optional types, datetime).
 """
 
-from datetime import datetime
+from datetime import ( datetime, timezone )
 from enum import Enum
 from typing import Optional
 
@@ -46,7 +46,7 @@ class LocationUpdate(BaseModel):
     longitude: float
     heading: Optional[float] = None
     speed: Optional[float] = None
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory= lambda: datetime.now(timezone.utc))
 
 
 class MatchRequest(BaseModel):
@@ -57,7 +57,7 @@ class MatchRequest(BaseModel):
     dropoff_latitude: float
     dropoff_longitude: float
     ride_type: RideType = RideType.STANDARD
-    requested_at: datetime = Field(default_factory=datetime.utcnow)
+    requested_at: datetime = Field(default_factory= lambda: datetime.now(timezone.utc))
 
 
 class TripState(BaseModel):
@@ -71,5 +71,5 @@ class TripState(BaseModel):
     dropoff_latitude: float
     dropoff_longitude: float
     ride_type: RideType = RideType.STANDARD
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory= lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
