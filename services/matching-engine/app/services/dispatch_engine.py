@@ -7,7 +7,7 @@ left empty for downstream implementation.
 """
 
 from typing import Optional
-from datetime import datetime
+from datetime import ( datetime, timezone )
 from app.models.schemas import ( RideType, TripStatus, LocationUpdate, MatchRequest, TripState )
 from app.db.connection import ( get_connection, close_connection )
 
@@ -41,25 +41,24 @@ class DispatchEngine:
         cur = conn.cursor()
         query_driver_status_pending = 'PENDING'
         query_driver_status_matched = 'MATCHED'
-
-        cur.execute("""
-            SELECT driver_id 
-            FROM Drivers 
-            WHERE status = %s 
-            ORDER BY ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326)) 
-            LIMIT 1;""", 
+        
+        try: 
+            cur.execute("""
+                SELECT driver_id 
+                FROM Drivers 
+                WHERE status = %s 
+                ORDER BY ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326)) 
+                LIMIT 1;""", 
             (query_driver_status_pending, 
             new_match_request.pickup_longitude, 
             new_match_request.pickup_latitude))
-        
-        try: 
             closest_available_driver = cur.fetchone()
             if not closest_available_driver:
                 print("No Drivers Available...")
                 return None
             trip_instance.driver_id = closest_available_driver[0]
             trip_instance.status = TripStatus.MATCHED
-            trip_instance.updated_at = datetime.utcnow()
+            trip_instance.updated_at = datetime.now(timezone.utc)
             cur.execute("""
                 UPDATE Drivers 
                 SET status = %s 
@@ -101,7 +100,12 @@ class DispatchEngine:
                 UPDATE Drivers
                 SET geom = ST_SetSRID(ST_MakePoint(%s, %s), 4326), heading = %s, speed = %s, timestamp = %s
                 WHERE driver_id = %s;""",
-                (update.longitude, update.latitude, update.heading, update.speed, update.timestamp, update.driver_id))
+                (update.longitude, 
+                update.latitude, 
+                update.heading, 
+                update.speed, 
+                update.timestamp, 
+                update.driver_id))
             print(f"Driver {update.driver_id}'s Location is Updated!")
         except Exception as e:
             print(f"Database Error during Matching: {e}")
@@ -115,7 +119,38 @@ class DispatchEngine:
         Args:
             trip_id: Unique identifier of the trip to cancel.
 
-        Raises:
-            NotImplementedError: Method not yet implemented.
         """
-        raise NotImplementedError
+        conn = get_connection()
+        cur = conn.cursor()
+        query_driver_status_cancelled = 'CANCELLED'
+        query_driver_status_pending = 'PENDING'
+        # Given trip_id, we need to search for the driver for the row with trip_id
+        # Once found, change status and updated at accordingly in trip if cannot remove.
+        # Once found, find the driver in Drivers table and change their status to pending as well as timestamp. 
+        try:
+            cur.execute("""
+                SELECT driver_id 
+                FROM Trips
+                WHERE trip_id = %s             
+                LIMIT 1;""", 
+                (trip_id,)) 
+            driver_found = cur.fetchone()
+            if not driver_found:
+                print("Driver Does Not Exists!")
+                return
+            cur.execute("""
+                UPDATE Trips
+                SET status = %s, updated_at = %s
+                WHERE trip_id = %s;""",
+            (query_driver_status_cancelled, datetime.now(timezone.utc), trip_id))
+            cur.execute("""
+                UPDATE Drivers
+                SET status = %s, timestamp = %s
+                WHERE driver_id = %s;""",
+                (query_driver_status_pending, datetime.now(timezone.utc), driver_found[0]))
+        except Exception as e:
+            print(f"Database Error during Matching: {e}")
+            return None
+        finally:
+            if 'cur' in locals():
+                cur.close()
