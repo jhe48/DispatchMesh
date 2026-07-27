@@ -99,9 +99,9 @@ class DispatchEngine:
         try: 
             cur.execute("""
                 UPDATE Drivers
-                SET geom = ST_SetSRID(ST_MakePoint(%s, %s), 4326)
+                SET geom = ST_SetSRID(ST_MakePoint(%s, %s), 4326), heading = %s, speed = %s, timestamp = %s
                 WHERE driver_id = %s;""",
-                (update.longitude, update.latitude, update.driver_id))
+                (update.longitude, update.latitude, update.heading, update.speed, update.timestamp, update.driver_id))
             print(f"Driver {update.driver_id}'s Location is Updated!")
         except Exception as e:
             print(f"Database Error during Matching: {e}")
