@@ -92,14 +92,6 @@ async def initialize_database() -> None:
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
-    trips_drivers_gist_index = ('''
-        CREATE INDEX IF NOT EXISTS idx_trips_drivers_location
-        ON Trips USING GIST (dropoff_location)
-    ''')
-    trips_riders_gist_index = ('''
-        CREATE INDEX IF NOT EXISTS idx_trips_riders_location
-        ON Trips USING GIST (pickup_location);
-    ''')
     global _connection
     if _connection:
         cur = _connection.cursor()
@@ -107,9 +99,6 @@ async def initialize_database() -> None:
             cur.execute(create_drivers_table)    
             cur.execute(drivers_gist_index)
             cur.execute(create_trips_table)    
-            cur.execute(trips_drivers_gist_index)
-            cur.execute(trips_riders_gist_index)
-
         except Exception as e:
             print(f"Cannot Execute SQL: {e}")
         finally: 
