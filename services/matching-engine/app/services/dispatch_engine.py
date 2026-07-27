@@ -9,7 +9,8 @@ left empty for downstream implementation.
 from typing import Optional
 from datetime import ( datetime, timezone )
 from app.models.schemas import ( RideType, TripStatus, LocationUpdate, MatchRequest, TripState )
-from app.db.connection import ( get_connection, close_connection )
+from app.db.connection import ( get_connection )
+from app.services.broker import publish_event
 
 
 class DispatchEngine:
@@ -77,6 +78,7 @@ class DispatchEngine:
                  trip_instance.ride_type,
                  trip_instance.created_at,
                  trip_instance.updated_at))
+            await publish_event("trip.matched", trip_instance.model_dump())
             return trip_instance
         except Exception as e:
             print(f"Database Error during Matching: {e}")
@@ -148,6 +150,7 @@ class DispatchEngine:
                 SET status = %s, timestamp = %s
                 WHERE driver_id = %s;""",
                 (query_driver_status_pending, datetime.now(timezone.utc), driver_found[0]))
+            await publish_event( "trip.cancelled", {"trip_id": trip_id, "status": query_driver_status_cancelled} )
         except Exception as e:
             print(f"Database Error during Matching: {e}")
             return None
