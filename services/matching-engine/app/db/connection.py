@@ -65,8 +65,8 @@ async def initialize_database() -> None:
 
     TODO: implement database initialisation logic.
     """
-    create_driver_table = ('''
-        CREATE TABLE IF NOT EXISTS drivers (
+    create_drivers_table = ('''
+        CREATE TABLE IF NOT EXISTS Drivers (
             driver_id SERIAL PRIMARY KEY,
             geom GEOMETRY(Point, 4326),
             heading FLOAT DEFAULT NULL, 
@@ -75,16 +75,41 @@ async def initialize_database() -> None:
             timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
-    gist_index = ('''
+    drivers_gist_index = ('''
         CREATE INDEX IF NOT EXISTS idx_drivers_location
-        ON drivers USING GIST (geom);
+        ON Drivers USING GIST (geom);
+    ''')
+    create_trips_table = ('''
+        CREATE TABLE IF NOT EXISTS Trips (
+            trip_id SERIAL PRIMARY KEY,
+            rider_id VARCHAR(255),
+            driver_id VARCHAR(255),
+            status VARCHAR(100),
+            pickup_location GEOMETRY(Point, 4326),
+            dropoff_location GEOMETRY(Point, 4326),
+            ride_type VARCHAR(100),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    ''')
+    trips_drivers_gist_index = ('''
+        CREATE INDEX IF NOT EXISTS idx_trips_drivers_location
+        ON Trips USING GIST (dropoff_location)
+    ''')
+    trips_riders_gist_index = ('''
+        CREATE INDEX IF NOT EXISTS idx_trips_riders_location
+        ON Trips USING GIST (pickup_location);
     ''')
     global _connection
     if _connection:
         cur = _connection.cursor()
         try:
-            cur.execute(create_driver_table)    
-            cur.execute(gist_index)
+            cur.execute(create_drivers_table)    
+            cur.execute(drivers_gist_index)
+            cur.execute(create_trips_table)    
+            cur.execute(trips_drivers_gist_index)
+            cur.execute(trips_riders_gist_index)
+
         except Exception as e:
             print(f"Cannot Execute SQL: {e}")
         finally: 
