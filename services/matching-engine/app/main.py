@@ -6,7 +6,7 @@ Provides the HTTP layer for the rider-driver matching microservice.
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import uvicorn
 from typing import Optional
 
@@ -69,7 +69,7 @@ _dispatch_engine = DispatchEngine()
 async def match_request_check(request: MatchRequest) -> Optional[dict]:
     match_found = await _dispatch_engine.find_match(request)
     if not match_found:
-        return None
+        raise HTTPException(status_code=404, detail="No Drivers Found...")
     return { "driver": match_found.driver_id }
 
 @app.put("/location")
@@ -77,6 +77,7 @@ async def driver_location_check(update: LocationUpdate):
     await _dispatch_engine.update_driver_location(update)
     return { "status": "updated" }
 
+@app.put("/trip/{trip_id}/cancel")
 async def cancel_trip_check(trip_id: str):
     await _dispatch_engine.cancel_trip(trip_id)
     return { "status": "cancelled" }
