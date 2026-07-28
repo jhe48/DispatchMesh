@@ -126,19 +126,23 @@ class DispatchEngine:
         cur = conn.cursor()
         query_driver_status_cancelled = 'CANCELLED'
         query_driver_status_pending = 'PENDING'
+        query_driver_status_completed = 'COMPLETED'
         # Given trip_id, we need to search for the driver for the row with trip_id
         # Once found, change status and updated at accordingly in trip if cannot remove.
         # Once found, find the driver in Drivers table and change their status to pending as well as timestamp. 
         try:
             cur.execute("""
-                SELECT driver_id 
+                SELECT driver_id, status 
                 FROM Trips
                 WHERE trip_id = %s             
                 LIMIT 1;""", 
                 (trip_id,)) 
             driver_found = cur.fetchone()
-            if not driver_found:
+            if not driver_found[0]:
                 print("Driver Does Not Exists!")
+                return
+            if driver_found[1] and driver_found[1] == query_driver_status_completed:
+                print("Trip Has Been Completed!")
                 return
             cur.execute("""
                 UPDATE Trips
