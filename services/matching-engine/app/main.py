@@ -26,6 +26,7 @@ async def _on_startup() -> None:
     """
     get_connection()
     await initialize_database()
+    get_redis_client()
 
 
 async def _on_shutdown() -> None:
