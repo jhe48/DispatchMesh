@@ -124,9 +124,10 @@ class DispatchEngine:
         """
         conn = get_connection()
         cur = conn.cursor()
-        query_driver_status_cancelled = 'CANCELLED'
         query_driver_status_pending = 'PENDING'
-        query_driver_status_completed = 'COMPLETED'
+        query_driver_status_en_route = 'EN_ROUTE'
+        query_driver_status_matched = 'MATCHED'
+        query_driver_status_cancelled = 'CANCELLED'
         # Given trip_id, we need to search for the driver for the row with trip_id
         # Once found, change status and updated at accordingly in trip if cannot remove.
         # Once found, find the driver in Drivers table and change their status to pending as well as timestamp. 
@@ -138,11 +139,12 @@ class DispatchEngine:
                 LIMIT 1;""", 
                 (trip_id,)) 
             driver_found = cur.fetchone()
-            if not driver_found and not driver_found[0]:
+            if not driver_found or not driver_found[0]:
                 print("Driver Does Not Exists!")
                 return
-            if driver_found[1] and driver_found[1] != query_driver_status_pending:
-                print("Trip Is Not In Progress!")
+            # ONCE ARRIVED RIDER CANNOT CANCEL! 
+            if driver_found[1] and( driver_found[1] != query_driver_status_pending and driver_found[1] != query_driver_status_en_route and driver_found[1] != query_driver_status_matched):
+                print("Trip Cannot Be Cancelled!")
                 return
             cur.execute("""
                 UPDATE Trips
