@@ -8,10 +8,12 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 import uvicorn
+from typing import Optional
 
 from app.db.connection import ( get_connection, initialize_database, close_connection )
 from app.services.broker import get_redis_client
-
+from app.services.dispatch_engine import ( DispatchEngine )
+from app.models.schemas import ( RideType, TripStatus, LocationUpdate, MatchRequest, TripState )
 
 # ──────────────────────────────────────────────
 # Lifespan (startup / shutdown)
@@ -62,6 +64,22 @@ async def health_check():
     """Liveness / readiness probe."""
     return {"status": "ok"}
 
+_dispatch_engine = DispatchEngine()
+@app.post("/match")
+async def match_request_check(request: MatchRequest) -> Optional[dict]:
+    match_found = await _dispatch_engine.find_match(request)
+    if not match_found:
+        return None
+    return { "driver": match_found.driver_id }
+
+@app.put("/location")
+async def driver_location_check(update: LocationUpdate):
+    await _dispatch_engine.update_driver_location(update)
+    return { "status": "updated" }
+
+async def cancel_trip_check(trip_id: str):
+    await _dispatch_engine.cancel_trip(trip_id)
+    return { "status": "cancelled" }
 
 # ──────────────────────────────────────────────
 # Entrypoint
