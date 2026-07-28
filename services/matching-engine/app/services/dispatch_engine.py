@@ -138,11 +138,11 @@ class DispatchEngine:
                 LIMIT 1;""", 
                 (trip_id,)) 
             driver_found = cur.fetchone()
-            if not driver_found[0]:
+            if not driver_found and not driver_found[0]:
                 print("Driver Does Not Exists!")
                 return
-            if driver_found[1] and driver_found[1] == query_driver_status_completed:
-                print("Trip Has Been Completed!")
+            if driver_found[1] and driver_found[1] != query_driver_status_pending:
+                print("Trip Is Not In Progress!")
                 return
             cur.execute("""
                 UPDATE Trips
