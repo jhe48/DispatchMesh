@@ -128,9 +128,7 @@ class DispatchEngine:
         query_driver_status_en_route = 'EN_ROUTE'
         query_driver_status_matched = 'MATCHED'
         query_driver_status_cancelled = 'CANCELLED'
-        # Given trip_id, we need to search for the driver for the row with trip_id
-        # Once found, change status and updated at accordingly in trip if cannot remove.
-        # Once found, find the driver in Drivers table and change their status to pending as well as timestamp. 
+        allowed_cancellation_status = [query_driver_status_pending, query_driver_status_en_route, query_driver_status_matched]
         try:
             cur.execute("""
                 SELECT driver_id, status 
@@ -143,7 +141,7 @@ class DispatchEngine:
                 print("Driver Does Not Exists!")
                 return
             # ONCE ARRIVED RIDER CANNOT CANCEL! 
-            if driver_found[1] and( driver_found[1] != query_driver_status_pending and driver_found[1] != query_driver_status_en_route and driver_found[1] != query_driver_status_matched):
+            if driver_found[1] and driver_found[1] not in allowed_cancellation_status:
                 print("Trip Cannot Be Cancelled!")
                 return
             cur.execute("""
