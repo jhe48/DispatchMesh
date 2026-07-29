@@ -11,7 +11,7 @@ import jwt from 'jsonwebtoken';
 
 const dispatchEngine = new DispatchEngine();
 const active_connections: Map<WebSocket, string> = new Map<WebSocket, string>();
-const JWT_KEY = process.env.JWT_SECRET;
+const JWT_KEY = process.env.JWT_SECRET || "default_fallback_for_local_dev";
 
 
 export async function handleWebSocketMessage(ws: WebSocket, message: string): Promise<void> {
@@ -19,6 +19,16 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
   try {
     const received_message = JSON.parse(message);
     switch (received_message.type) {
+      case "auth":
+        try {
+          const decoded = jwt.verify(received_message.payload, JWT_KEY) as { userId: string };
+          active_connections.set(ws, decoded.userId);
+          ws.send(JSON.stringify({ status: "Success", message: "Authenticated Successfully!" }));
+          console.log(`User ${decoded.userId} connected!`);
+        } catch (err) {
+          ws.send(JSON.stringify({ status: 'Error', message: "Invalid Token!"}));
+        }
+        break;
       case "request_match":
         await dispatchEngine.findMatch(received_message.payload);
         ws.send(JSON.stringify({ status: "success", message: "Match Requested!"}));
