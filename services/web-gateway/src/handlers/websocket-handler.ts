@@ -18,7 +18,7 @@ subscribeToChannel("trip.matched", (message) => {
     const received_rider_Id = received_message.rider_id;
     for (const [ws, id] of active_connections.entries()) {
       if (id == received_rider_Id) {
-        ws.send(JSON.stringify( {status: "Success", message: `Driver is Here, ${id}!` }));
+        ws.send(JSON.stringify( {status: "Success", message: `A Driver has been Found, ${id}!` }));
       }
     }
   } catch (err) {
@@ -71,9 +71,9 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
  * Handle a new WebSocket connection (set up listeners, auth, etc.).
  */
 export function handleWebSocketConnection(ws: WebSocket): void {
-  // TODO: register message/close/error listeners, perform auth handshake
-  ws.on('message', (data) => {
-    handleWebSocketMessage(ws, data.toString())
-
-  });
+  if (active_connections.has(ws)) {
+    ws.on('message', (data) => {
+      handleWebSocketMessage(ws, data.toString())
+    });
+  }
 }
