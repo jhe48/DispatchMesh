@@ -24,7 +24,15 @@ subscribeToChannel("trip.matched", (message) => {
   } catch (err) {
     console.error("Faled to parse JSON String: ", err);
   }
+});
 
+subscribeToChannel("driver.location.updated", (message) => {
+  try {
+    const received_message = JSON.parse(message);
+    const received_latitude = received_message.latitude, received_longitude = received_message.longitude;
+  } catch (err) {
+    console.error("Failed to parse JSON String: ", err);
+  }
 });
 
 export async function handleWebSocketMessage(ws: WebSocket, message: string): Promise<void> {
