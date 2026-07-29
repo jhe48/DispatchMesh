@@ -4,7 +4,6 @@ import { MatchRequest, LocationUpdate, TripState, TripStatus } from '../types/co
 import { DispatchEngine } from '../services/dispatch-engine';
 import jwt from 'jsonwebtoken';
 
-
 /**
  * Handle an incoming WebSocket text message.
  */
@@ -13,11 +12,26 @@ const dispatchEngine = new DispatchEngine();
 const active_connections: Map<WebSocket, string> = new Map<WebSocket, string>();
 const JWT_KEY = process.env.JWT_SECRET || "default_fallback_for_local_dev";
 
+subscribeToChannel("trip.matched", (message) => {
+  try {
+    const received_message = JSON.parse(message);
+    const received_rider_Id = received_message.rider_id;
+    for (const [ws, id] of active_connections.entries()) {
+      if (id == received_rider_Id) {
+        ws.send(JSON.stringify( {status: "Success", message: `Driver is Here, ${id}!` }));
+      }
+    }
+  } catch (err) {
+    console.error("Faled to parse JSON String: ", err);
+  }
+
+});
 
 export async function handleWebSocketMessage(ws: WebSocket, message: string): Promise<void> {
   // TODO: parse message, route to appropriate service action
   try {
     const received_message = JSON.parse(message);
+    if (!active_connections.has(ws) && received_message.type!=="auth") return
     switch (received_message.type) {
       case "auth":
         try {
