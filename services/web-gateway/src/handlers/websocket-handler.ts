@@ -2,6 +2,8 @@ import { WebSocket } from 'ws';
 import { subscribeToChannel } from '../services/broker';
 import { MatchRequest, LocationUpdate, TripState, TripStatus } from '../types/contracts';
 import { DispatchEngine } from '../services/dispatch-engine';
+import jwt from 'jsonwebtoken';
+
 
 /**
  * Handle an incoming WebSocket text message.
@@ -9,7 +11,9 @@ import { DispatchEngine } from '../services/dispatch-engine';
 
 const dispatchEngine = new DispatchEngine();
 const active_connections: Map<WebSocket, string> = new Map<WebSocket, string>();
- 
+const JWT_KEY = process.env.JWT_SECRET;
+
+
 export async function handleWebSocketMessage(ws: WebSocket, message: string): Promise<void> {
   // TODO: parse message, route to appropriate service action
   try {
