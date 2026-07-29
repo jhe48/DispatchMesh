@@ -8,7 +8,8 @@ import { DispatchEngine } from '../services/dispatch-engine';
  */
 
 const dispatchEngine = new DispatchEngine();
-
+const active_connections: Map<WebSocket, string> = new Map<WebSocket, string>();
+ 
 export async function handleWebSocketMessage(ws: WebSocket, message: string): Promise<void> {
   // TODO: parse message, route to appropriate service action
   try {
@@ -45,5 +46,6 @@ export function handleWebSocketConnection(ws: WebSocket): void {
   // TODO: register message/close/error listeners, perform auth handshake
   ws.on('message', (data) => {
     handleWebSocketMessage(ws, data.toString())
+
   });
 }
