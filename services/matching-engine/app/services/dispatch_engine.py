@@ -25,8 +25,10 @@ class DispatchEngine:
         """
         print(f"Rider {new_match_request.rider_id} is Requesting a Driver!")
 
+        # TODO: Some UNIQUE TRIP ID
+
         trip_instance = TripState(
-            trip_id = new_match_request.rider_id, # Some UNIQUE TRIP ID
+            trip_id = new_match_request.rider_id,
             rider_id = new_match_request.rider_id,
             status = TripStatus.PENDING,
             pickup_latitude = new_match_request.pickup_latitude,
