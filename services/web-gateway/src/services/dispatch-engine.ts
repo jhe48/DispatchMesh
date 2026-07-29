@@ -9,35 +9,41 @@ export class DispatchEngine {
    * Find and assign the best available driver for the given rider.
    */
   async findMatch(match_request: MatchRequest): Promise<void> {
-    // TODO: implement matching algorithm
-    const find_match_response = await fetch(`http://matching-engine:8000/match`, {
+        const find_match_response = await fetch(`http://matching-engine:8000/match`, {
         method: `POST`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(match_request)
-      });
+        });
+      if (!find_match_response.ok) {
+        throw new Error(`Python backend failed with status: ${find_match_response.status}`); 
+      }
   }
 
   /**
    * Persist a real-time location update from a driver.
    */
   async updateDriverLocation(location_update: LocationUpdate): Promise<void> {
-    // TODO: implement driver location tracking
-    const update_driver_response = await fetch(`http://matching-engine:8000/location`, {
+      const update_driver_response = await fetch(`http://matching-engine:8000/location`, {
         method: `PUT`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(location_update)
       });
+      if (!update_driver_response.ok) {
+        throw new Error(`Python backend failed with status: ${update_driver_response.status}`); 
+      }
   }
 
   /**
    * Cancel an in-progress or pending trip.
    */
   async cancelTrip(tripId: string): Promise<void> {
-    // TODO: implement trip cancellation logic
-    const cancel_trip_response = await fetch(`http://matching-engine:8000/trip/${tripId}/cancel`, {
+      const cancel_trip_response = await fetch(`http://matching-engine:8000/trip/${tripId}/cancel`, {
         method: `PUT`,
         headers: { 'Content-Type': 'application/json' },
         body: tripId
       });
+      if (!cancel_trip_response.ok) {
+        throw new Error(`Python backend failed with status: ${cancel_trip_response.status}`); 
+      }
   }
 }

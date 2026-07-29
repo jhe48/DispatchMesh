@@ -9,21 +9,25 @@ import { DispatchEngine } from '../services/dispatch-engine';
 
 const dispatchEngine = new DispatchEngine();
 
-export function handleWebSocketMessage(ws: WebSocket, message: string): void {
+export async function handleWebSocketMessage(ws: WebSocket, message: string): Promise<void> {
   // TODO: parse message, route to appropriate service action
   try {
     const received_message = JSON.parse(message);
     switch (received_message.type) {
       case "request_match":
-        dispatchEngine.findMatch(received_message.payload)
+        await dispatchEngine.findMatch(received_message.payload);
+        ws.send(JSON.stringify({ status: "success", message: "Match Requested!"}));
         console.log("request_match");
         break;
       case "update_location":
-        dispatchEngine.updateDriverLocation(received_message.payload)
+        await dispatchEngine.updateDriverLocation(received_message.payload);
+        ws.send(JSON.stringify({ status: "success", message: "Location Updated!"}));
+
         console.log("update_location");
         break;
       case "cancel_trip":
-        dispatchEngine.cancelTrip(received_message.payload)
+        await dispatchEngine.cancelTrip(received_message.payload);
+        ws.send(JSON.stringify({ status: "success", message: "Trip Cancelled!"}));
         console.log("cancel_trip");
         break;
       default:
