@@ -109,6 +109,7 @@ class DispatchEngine:
                 update.timestamp, 
                 update.driver_id))
             print(f"Driver {update.driver_id}'s Location is Updated!")
+            await publish_event("driver.location.updated", update.dump())
         except Exception as e:
             print(f"Database Error during Matching: {e}")
         finally:
