@@ -22,7 +22,7 @@ subscribeToChannel("trip.matched", (message) => {
       }
     }
   } catch (err) {
-    console.error("Faled to parse JSON String: ", err);
+    console.error("Failed to parse JSON String: ", err);
   }
 });
 
