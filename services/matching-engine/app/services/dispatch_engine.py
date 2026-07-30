@@ -141,10 +141,10 @@ class DispatchEngine:
         """
         conn = get_connection()
         cur = conn.cursor()
-        query_driver_status_pending = 'PENDING'
-        query_driver_status_en_route = 'EN_ROUTE'
-        query_driver_status_matched = 'MATCHED'
-        query_driver_status_cancelled = 'CANCELLED'
+        query_driver_status_pending = 'pending'
+        query_driver_status_en_route = 'en_route'
+        query_driver_status_matched = 'matched'
+        query_driver_status_cancelled = 'cancelled'
         allowed_cancellation_status = [query_driver_status_pending, query_driver_status_en_route, query_driver_status_matched]
         try:
             cur.execute("""
