@@ -110,9 +110,7 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
  * Handle a new WebSocket connection (set up listeners, auth, etc.).
  */
 export function handleWebSocketConnection(ws: WebSocket): void {
-  if (active_connections.has(ws)) {
     ws.on('message', (data) => {
       handleWebSocketMessage(ws, data.toString())
     });
-  }
 }
