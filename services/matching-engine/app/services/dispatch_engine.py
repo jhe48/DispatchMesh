@@ -114,7 +114,7 @@ class DispatchEngine:
             cur.execute("""
                 SELECT rider_id
                 FROM Trips
-                WHERE driver_id = %s AND status IN ( 'MATCHED', 'EN_ROUTE', 'ARRIVED', 'IN_PROGRESS' )
+                WHERE driver_id = %s AND status IN ( 'matched', 'en_route', 'arrived', 'in_progress' )
                 LIMIT 1;""",
                 (update.driver_id,))
             matched_rider = cur.fetchone()
