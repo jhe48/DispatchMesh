@@ -38,8 +38,6 @@ class DispatchEngine:
             ride_type = new_match_request.ride_type,
             created_at = new_match_request.requested_at,
         )
-
-        # Query Closest Available Driver to fill in trip_instance( driver_id = X)
         conn = get_connection()
         cur = conn.cursor()
         query_driver_status_pending = 'pending'
