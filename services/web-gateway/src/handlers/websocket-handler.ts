@@ -16,11 +16,31 @@ subscribeToChannel("trip.matched", (message) => {
   try {
     const received_message = JSON.parse(message);
     const received_rider_Id = received_message.rider_id;
+    const received_driver_Id = received_message.driver_id;
+    // Pickup Location
+    const received_pickup_latitude = received_message.pickup_latitude, received_pickup_longitude = received_message.pickup_longitude;
+    // Dropoff Location
+    const received_dropoff_latitude = received_message.dropoff_latitude, received_dropoff_longitude = received_message.dropoff_longitude;
     for (const [ws, id] of active_connections.entries()) {
       if (id == received_rider_Id) {
-        ws.send(JSON.stringify({ status: "Success", message: `A Driver has been Found, ${id}!` }));
-      }
+        ws.send(JSON.stringify({ 
+          type: "Match_Found", 
+          role: "Rider",
+          driver_id: received_driver_Id
+        }));
     }
+      if (id == received_driver_Id) {
+        ws.send(JSON.stringify({ 
+          type: "New_Ride", 
+          role: "Driver",
+          rider: received_rider_Id,
+          pickup_latitude: received_pickup_latitude,
+          pickup_longitude: received_pickup_longitude,
+          dropoff_latitude: received_dropoff_latitude,
+          dropoff_longitude: received_dropoff_longitude 
+        }));
+      }
+    } 
   } catch (err) {
     console.error("Failed to parse JSON String: ", err);
   }
