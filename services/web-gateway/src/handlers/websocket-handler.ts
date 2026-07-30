@@ -67,7 +67,6 @@ subscribeToChannel("driver.location.updated", (message) => {
 });
 
 export async function handleWebSocketMessage(ws: WebSocket, message: string): Promise<void> {
-  // TODO: parse message, route to appropriate service action
   try {
     const received_message = JSON.parse(message);
     if (!active_connections.has(ws) && received_message.type!=="auth") return
