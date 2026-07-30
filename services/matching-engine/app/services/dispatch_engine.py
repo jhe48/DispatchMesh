@@ -111,7 +111,21 @@ class DispatchEngine:
                 update.timestamp, 
                 update.driver_id))
             print(f"Driver {update.driver_id}'s Location is Updated!")
-            await publish_event("driver.location.updated", update.dump())
+            cur.execute("""
+                SELECT rider_id
+                FROM Trips
+                WHERE driver_id = %s AND status in ('MATCHED', 'EN_ROUTE')
+                LIMIT 1;""",
+                (update.driver_id,))
+            matched_rider = cur.fetchone()
+            if not matched_rider:
+                print(f"No Rider Assigned to Driver {update.driver_id}...")
+                return None
+            payload_to_publish = {
+                "rider_id": matched_rider[0],
+                "latitude": update.latitude,
+                "longitude": update.longitude }
+            await publish_event("driver.location.updated", payload_to_publish)
         except Exception as e:
             print(f"Database Error during Matching: {e}")
         finally:
