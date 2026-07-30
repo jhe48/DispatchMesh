@@ -113,4 +113,7 @@ export function handleWebSocketConnection(ws: WebSocket): void {
     ws.on('message', (data) => {
       handleWebSocketMessage(ws, data.toString())
     });
+    ws.on('close', () => {
+      active_connections.delete(ws);
+    })
 }
