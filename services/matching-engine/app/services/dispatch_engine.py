@@ -42,8 +42,8 @@ class DispatchEngine:
         # Query Closest Available Driver to fill in trip_instance( driver_id = X)
         conn = get_connection()
         cur = conn.cursor()
-        query_driver_status_pending = 'PENDING'
-        query_driver_status_matched = 'MATCHED'
+        query_driver_status_pending = 'pending'
+        query_driver_status_matched = 'matched'
         
         try: 
             cur.execute("""
