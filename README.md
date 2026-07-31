@@ -4,33 +4,34 @@
 ```
     DispatchMesh/
     ├── docker-compose.yml          # Orchestrates all 4 containers
+    ├── .env                        # Local environment variables (JWT secret, DB urls)
     ├── .env.example                # Environment variable template
     ├── .gitignore                  # Ignores node_modules, .env, venv, Agents.md, etc.
     │
     ├── services/web-gateway/       # TypeScript/Node.js Service
     │   ├── Dockerfile              # Multi-stage Node 20 Alpine build
-    │   ├── package.json            # @dispatchmesh/web-gateway
+    │   ├── package.json            # @dispatchmesh/web-gateway (includes jsonwebtoken)
     │   ├── tsconfig.json           # Strict, ES2022, NodeNext
     │   └── src/
-    │       ├── server.ts           # Express + WebSocket entry point (/health endpoint)
+    │       ├── server.ts           # Express + WebSocket entry point
     │       ├── types/contracts.ts  # LocationUpdate, MatchRequest, TripState interfaces
-    │       ├── db/connection.ts    # PostgreSQL Pool export + empty initializeDatabase()
+    │       ├── db/connection.ts    # PostgreSQL Pool export
     │       ├── services/
-    │       │   ├── dispatch-engine.ts  # DispatchEngine class (empty stubs)
-    │       │   └── broker.ts          # Redis Pub/Sub (empty stubs)
+    │       │   ├── dispatch-engine.ts  # HTTP client to Python matching engine
+    │       │   └── broker.ts          # Redis Pub/Sub channel subscriptions
     │       └── handlers/
-    │           └── websocket-handler.ts  # WS message handler (empty stubs)
+    │           └── websocket-handler.ts  # WebSocket message routing & JWT auth
     │
     └── services/matching-engine/   # Python Microservice
         ├── Dockerfile              # Python 3.12-slim
         ├── requirements.txt        # FastAPI, uvicorn, redis, psycopg2, pydantic
         └── app/
-            ├── main.py             # FastAPI app (/health endpoint)
+            ├── main.py             # FastAPI entry point
             ├── models/schemas.py   # Pydantic models mirroring TS contracts
             ├── services/
-            │   ├── dispatch_engine.py  # DispatchEngine class (empty stubs)
-            │   └── broker.py          # Redis broker (empty stubs)
-            └── db/connection.py    # DB connection loader (empty stub)
+            │   ├── dispatch_engine.py  # Core matching logic, PostGIS queries, event enrichment
+            │   └── broker.py          # Redis publisher for microservice events
+            └── db/connection.py    # Postgres connection loader
 ```
 
 ### AI Integration
