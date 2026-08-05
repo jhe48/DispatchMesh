@@ -28,7 +28,6 @@ def get_connection():
         Connection — To execute queries, commit executions, etc. through Database Connection.
     """
 
-    # TODO: build and return a psycopg2 connection using env vars.
     global _connection
     if not _connection:
         try:
