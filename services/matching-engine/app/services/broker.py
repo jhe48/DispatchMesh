@@ -26,7 +26,6 @@ def get_redis_client():
     Returns:
         Client — actual Redis client.
     """
-    # TODO: build and return a redis.Redis client using env vars.
     global _client
     if not _client:
         try:
@@ -50,18 +49,3 @@ async def publish_event(channel: str, payload: dict) -> None:
     client = get_redis_client()
     payload_json = json.dumps(payload)
     client.publish(channel, payload_json)
-
-
-'''
-TODO: This client is being used as a publisher not a subscriber.
-async def subscribe_to_channel(channel: str) -> None:
-    """Subscribe to a Redis channel and process incoming messages.
-
-    Args:
-        channel: The Redis pub/sub channel name to subscribe to.
-
-    Raises:
-        NotImplementedError: Method not yet implemented.
-    """
-    raise NotImplementedError
-'''
