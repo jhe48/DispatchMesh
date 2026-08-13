@@ -60,9 +60,8 @@ def close_connection():
 
 
 async def initialize_database() -> None:
-    """Run any one-time database setup (migrations, table creation, etc.).
-
-    TODO: implement database initialisation logic.
+    """
+    Run any one-time database setup (migrations, table creation, etc.).
     """
     create_drivers_table = ('''
         CREATE TABLE IF NOT EXISTS Drivers (
