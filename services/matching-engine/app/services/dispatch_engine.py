@@ -12,6 +12,7 @@ from app.models.schemas import ( RideType, TripStatus, LocationUpdate, MatchRequ
 from app.db.connection import ( get_connection )
 from app.services.broker import publish_event
 
+import uuid
 
 class DispatchEngine:
     """Orchestrates rider-driver matching and trip lifecycle events."""
@@ -28,7 +29,7 @@ class DispatchEngine:
         # TODO: Some UNIQUE TRIP ID
 
         trip_instance = TripState(
-            trip_id = new_match_request.rider_id,
+            trip_id = uuid.uuid4(),
             rider_id = new_match_request.rider_id,
             status = TripStatus.PENDING,
             pickup_latitude = new_match_request.pickup_latitude,
