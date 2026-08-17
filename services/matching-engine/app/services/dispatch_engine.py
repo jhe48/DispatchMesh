@@ -29,7 +29,7 @@ class DispatchEngine:
         # TODO: Some UNIQUE TRIP ID
 
         trip_instance = TripState(
-            trip_id = uuid.uuid4(),
+            trip_id = str(uuid.uuid4()),
             rider_id = new_match_request.rider_id,
             status = TripStatus.PENDING,
             pickup_latitude = new_match_request.pickup_latitude,
