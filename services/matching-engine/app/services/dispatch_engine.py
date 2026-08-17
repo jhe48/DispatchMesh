@@ -26,8 +26,6 @@ class DispatchEngine:
         """
         print(f"Rider {new_match_request.rider_id} is Requesting a Driver!")
 
-        # TODO: Some UNIQUE TRIP ID
-
         trip_instance = TripState(
             trip_id = str(uuid.uuid4()),
             rider_id = new_match_request.rider_id,
