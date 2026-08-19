@@ -58,6 +58,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-dispatch_mesh}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - dispatch-net
     restart: unless-stopped
@@ -77,6 +78,5 @@ networks:
     driver: bridge
 
 volumes:
-  postgres-data:/var/lib/postgresl/data
-  ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  postgres-data:
   redis-data:
