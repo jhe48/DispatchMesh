@@ -65,7 +65,7 @@ async def initialize_database() -> None:
     """
     create_drivers_table = ('''
         CREATE TABLE IF NOT EXISTS Drivers (
-            driver_id SERIAL PRIMARY KEY,
+            driver_id VARCHAR(255) PRIMARY KEY,
             geom GEOMETRY(Point, 4326),
             heading FLOAT DEFAULT NULL, 
             speed FLOAT DEFAULT NULL,
@@ -79,7 +79,7 @@ async def initialize_database() -> None:
     ''')
     create_trips_table = ('''
         CREATE TABLE IF NOT EXISTS Trips (
-            trip_id SERIAL PRIMARY KEY,
+            trip_id VARCHAR(255) PRIMARY KEY,
             rider_id VARCHAR(255),
             driver_id VARCHAR(255),
             status VARCHAR(100),
