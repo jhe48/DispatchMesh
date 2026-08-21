@@ -77,7 +77,7 @@ class DispatchEngine:
                  trip_instance.ride_type,
                  trip_instance.created_at,
                  trip_instance.updated_at))
-            await publish_event("trip.matched", trip_instance.model_dump())
+            await publish_event("trip.matched", trip_instance.model_dump(mode='json'))
             return trip_instance
         except Exception as e:
             print(f"Database Error during Matching: {e}")
