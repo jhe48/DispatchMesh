@@ -6,3 +6,5 @@ __pycache__/
 Agents.md
 dist/
 *.pyc
+postman/
+.postman/
