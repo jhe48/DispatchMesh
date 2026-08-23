@@ -8,7 +8,7 @@ left empty for downstream implementation.
 
 from typing import Optional
 from datetime import ( datetime, timezone )
-from app.models.schemas import ( RideType, TripStatus, LocationUpdate, MatchRequest, TripState )
+from app.models.schemas import ( TripStatus, LocationUpdate, MatchRequest, TripState )
 from app.db.connection import ( get_connection )
 from app.services.broker import publish_event
 
