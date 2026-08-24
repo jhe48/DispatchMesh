@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken';
 
 const dispatchEngine = new DispatchEngine();
 const active_connections: Map<WebSocket, string> = new Map<WebSocket, string>();
-const JWT_KEY = process.env.JWT_SECRET || "default_fallback_for_local_dev";
+const JWT_KEY = process.env.JWT_SECRET_KEY || "default_fallback_for_local_dev";
 
 subscribeToChannel("trip.matched", (message) => {
   try {
