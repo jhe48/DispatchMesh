@@ -82,11 +82,15 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
         }
         break;
       case "request_match":
+        const real_rider_id = active_connections.get(ws);
+        received_message.payload.rider_id = real_rider_id;
         await dispatchEngine.findMatch(received_message.payload);
         ws.send(JSON.stringify({ status: "success", message: "Match Requested!"}));
         console.log("request_match");
         break;
       case "update_location":
+        const real_driver_id = active_connections.get(ws);
+        received_message.payload.driver_id = real_driver_id;
         await dispatchEngine.updateDriverLocation(received_message.payload);
         ws.send(JSON.stringify({ status: "success", message: "Location Updated!"}));
 
