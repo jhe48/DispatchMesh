@@ -10,8 +10,9 @@ export const pool = new Pool({
 
 /**
  * Run any one-time database setup (migrations, schema creation, etc.).
- */
+
 export async function initializeDatabase(): Promise<void> {
   // TODO: implement database initialisation / migration logic
   throw new Error('Not implemented');
 }
+ */
