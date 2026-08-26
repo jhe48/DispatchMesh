@@ -28,7 +28,7 @@ subscribeToChannel("trip.matched", (message) => {
           role: "Rider",
           driver_id: received_driver_Id
         }));
-    }
+      }
       if (id == received_driver_Id) {
         ws.send(JSON.stringify({ 
           type: "New_Ride", 
@@ -57,6 +57,28 @@ subscribeToChannel("driver.location.updated", (message) => {
           "payload": {
             "latitude": received_latitude,
             "longitude": received_longitude
+          }
+        }));
+      }
+    }
+  } catch (err) {
+    console.error("Failed to parse JSON String: ", err);
+  }
+});
+
+// await publish_event( "trip.cancelled", {"trip_id": trip_id, "rider_id": driver_found[2], "driver_id": driver_found[0], "status": query_driver_status_cancelled} )
+
+subscribeToChannel("trip.cancelled", (message) => {
+  try {
+    const received_message = JSON.parse(message);
+    const received_rider_id = received_message.rider_id, received_driver_id = received_message.driver_id;
+    for (const [ws, id] of active_connections.entries()) {
+      if (id == received_rider_id || id == received_driver_id) {
+        ws.send(JSON.stringify({
+          "type": "cancel_trip",
+          "payload": {
+            "rider_id": received_rider_id,
+            "driver_id": received_driver_id
           }
         }));
       }
