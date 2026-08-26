@@ -145,7 +145,7 @@ class DispatchEngine:
         allowed_cancellation_status = [query_driver_status_pending, query_driver_status_en_route, query_driver_status_matched]
         try:
             cur.execute("""
-                SELECT driver_id, status 
+                SELECT driver_id, status, rider_id 
                 FROM Trips
                 WHERE trip_id = %s             
                 LIMIT 1;""", 
@@ -153,6 +153,9 @@ class DispatchEngine:
             driver_found = cur.fetchone()
             if not driver_found or not driver_found[0]:
                 print("Driver Does Not Exists!")
+                return
+            if not driver_found or not driver_found[2]:
+                print("Rider Does Not Exists!")
                 return
             # ONCE ARRIVED RIDER CANNOT CANCEL! 
             if driver_found[1] and driver_found[1] not in allowed_cancellation_status:
@@ -168,7 +171,7 @@ class DispatchEngine:
                 SET status = %s, timestamp = %s
                 WHERE driver_id = %s;""",
                 (query_driver_status_pending, datetime.now(timezone.utc), driver_found[0]))
-            await publish_event( "trip.cancelled", {"trip_id": trip_id, "status": query_driver_status_cancelled} )
+            await publish_event( "trip.cancelled", {"trip_id": trip_id, "rider_id": driver_found[2], "driver_id": driver_found[0], "status": query_driver_status_cancelled} )
         except Exception as e:
             print(f"Database Error during Matching: {e}")
             return None
