@@ -37,7 +37,9 @@ export class DispatchEngine {
    * Cancel an in-progress or pending trip.
    */
   async cancelTrip(tripId: string): Promise<void> {
-      const cancel_trip_response = await fetch(`http://matching-engine:8000/trip/${tripId}/cancel`);
+      const cancel_trip_response = await fetch(`http://matching-engine:8000/trip/${tripId}/cancel`, {
+        method: `PUT`
+      });
       if (!cancel_trip_response.ok) {
         throw new Error(`Python backend failed with status: ${cancel_trip_response.status}`); 
       }
