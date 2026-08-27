@@ -66,8 +66,6 @@ subscribeToChannel("driver.location.updated", (message) => {
   }
 });
 
-// await publish_event( "trip.cancelled", {"trip_id": trip_id, "rider_id": driver_found[2], "driver_id": driver_found[0], "status": query_driver_status_cancelled} )
-
 subscribeToChannel("trip.cancelled", (message) => {
   try {
     const received_message = JSON.parse(message);

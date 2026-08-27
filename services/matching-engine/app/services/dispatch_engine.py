@@ -157,7 +157,6 @@ class DispatchEngine:
             if not driver_found or not driver_found[2]:
                 print("Rider Does Not Exists!")
                 return
-            # ONCE ARRIVED RIDER CANNOT CANCEL! 
             if driver_found[1] and driver_found[1] not in allowed_cancellation_status:
                 print("Trip Cannot Be Cancelled!")
                 return
