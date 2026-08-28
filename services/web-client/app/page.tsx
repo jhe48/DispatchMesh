@@ -10,12 +10,12 @@ export default function DispatchDashboard() {
     const ws = new WebSocket("ws://localhost:3000");
 
     // listen for open event 
-    ws.onmessage = (event) => {
+    ws.onopen = (event) => {
       ws.send(JSON.stringify({
         type: "auth",
         payload: process.env.JWT_HARDCODE
       }));
-      console.log("Message from the server: ", event.data);
+      console.log("Connected");
     };
   
     // update state to Connected and send fake JWT Auth message
