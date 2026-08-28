@@ -11,6 +11,10 @@ export default function DispatchDashboard() {
 
     // listen for open event 
     ws.onmessage = (event) => {
+      ws.send(JSON.stringify({
+        type: "auth",
+        payload: process.env.JWT_HARDCODE
+      }));
       console.log("Message from the server: ", event.data);
     };
   
