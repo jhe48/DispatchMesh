@@ -7,7 +7,13 @@ export default function DispatchDashboard() {
 
   useEffect(() => {
     // Initialize the WS connection to gateway localhost:3000
+    const ws = new WebSocket("ws://localhost:3000");
+
     // listen for open event 
+    ws.onmessage = (event) => {
+      console.log("Message from the server: ", event.data);
+    };
+  
     // update state to Connected and send fake JWT Auth message
     // listen for message event
     // when a message comes in, just console log it
