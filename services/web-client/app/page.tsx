@@ -18,9 +18,6 @@ export default function DispatchDashboard() {
       console.log("Connected");
     };
   
-    // update state to Connected and send fake JWT Auth message
-    // listen for message event
-    // when a message comes in, just console log it
     // close WS when component unmounts
     return () => {
       //close WS
