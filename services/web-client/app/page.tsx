@@ -15,6 +15,7 @@ export default function DispatchDashboard() {
         type: "auth",
         payload: process.env.JWT_HARDCODE
       }));
+      setStatus("Connected");
       console.log("Connected");
     };
   
