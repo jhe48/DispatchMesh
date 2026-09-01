@@ -10,18 +10,17 @@ export default function DispatchDashboard() {
     const ws = new WebSocket("ws://localhost:3000");
 
     // listen for open event 
-    ws.onopen = (event) => {
+    ws.onopen = () => {
       ws.send(JSON.stringify({
         type: "auth",
-        payload: process.env.JWT_HARDCODE
+        payload: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ0ZXN0cmlkZXIxMjMifQ.K38SAgkNbixawbagxvlyMLlNlLWLSD3U7V3HNGPLnX0"
       }));
       setStatus("Connected");
       console.log("Connected");
     };
   
-    // close WS when component unmounts
     return () => {
-      //close WS
+      ws.close()
     };
   }, []);
 
