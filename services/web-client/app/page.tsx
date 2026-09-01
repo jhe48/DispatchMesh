@@ -13,11 +13,15 @@ export default function DispatchDashboard() {
     ws.onopen = () => {
       ws.send(JSON.stringify({
         type: "auth",
-        payload: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ0ZXN0cmlkZXIxMjMifQ.K38SAgkNbixawbagxvlyMLlNlLWLSD3U7V3HNGPLnX0"
+        payload: process.env.NEXT_PUBLIC_JWT_HARDCODE
       }));
       setStatus("Connected");
-      console.log("Connected");
+      console.log("Server Connected");
     };
+
+    ws.onmessage = (event) => {
+      console.log("JWT Validity: ", event.data);
+    }
   
     return () => {
       ws.close()
