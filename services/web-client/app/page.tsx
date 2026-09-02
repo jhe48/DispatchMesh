@@ -6,10 +6,8 @@ export default function DispatchDashboard() {
   const [status, setStatus] = useState("Disconnected");
 
   useEffect(() => {
-    // Initialize the WS connection to gateway localhost:3000
     const ws = new WebSocket("ws://localhost:3000");
 
-    // listen for open event 
     ws.onopen = () => {
       ws.send(JSON.stringify({
         type: "auth",
