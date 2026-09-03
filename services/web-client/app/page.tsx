@@ -1,35 +1,15 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import UserPanel from "./components/UserPanel";
 
 export default function DispatchDashboard() {
-  const [status, setStatus] = useState("Disconnected");
-
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:3000");
-
-    ws.onopen = () => {
-      ws.send(JSON.stringify({
-        type: "auth",
-        payload: process.env.NEXT_PUBLIC_JWT_HARDCODE
-      }));
-      setStatus("Connected");
-      console.log("Server Connected");
-    };
-
-    ws.onmessage = (event) => {
-      console.log("JWT Validity: ", event.data);
-    }
-  
-    return () => {
-      ws.close()
-    };
-  }, []);
-
   return (
     <div className="p-8">
-      <h1>Dispatch Mesh Dashboard</h1>
-      <p>Status: {status}</p>
+      <h1>Dispatch Dashboard</h1>
+      <br /> 
+      <h2>Rider</h2>
+      <UserPanel token={process.env.TEST_RIDER_TOKEN || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ0ZXN0cmlkZXIxMjMifQ.K38SAgkNbixawbagxvlyMLlNlLWLSD3U7V3HNGPLnX0"} role="rider"/>
+      <br />
+      <h2>Driver</h2>
+      <UserPanel token={process.env.TEST_DRIVER_TOKEN || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiItMSJ9.CV4hUmQ4LxMFRfnf-NBHk2VNgY-vydmQver2M32fzwE"} role="driver" />
     </div>
-  );
+  )
 }
