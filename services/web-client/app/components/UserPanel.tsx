@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { stat } from "fs";
+import { useEffect, useState, useRef } from "react";
 
 interface UserPanelProps {
     role: string;
@@ -11,7 +12,7 @@ export default function UserPanel({ role, token }: UserPanelProps) {
   const [status, setStatus] = useState("Disconnected");
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:3000");
+    const ws = useRef(new WebSocket("ws://localhost:3000"));
 
     ws.onopen = () => {
       ws.send(JSON.stringify({
@@ -24,13 +25,11 @@ export default function UserPanel({ role, token }: UserPanelProps) {
 
     ws.onmessage = (event) => {
       console.log("JWT Validity: ", event.data);
-    }
-  
+    }  
     return () => {
       ws.close()
     };
   }, []);
-
   return (
     <div className="p-8">
       <p>Status: {status}</p>
