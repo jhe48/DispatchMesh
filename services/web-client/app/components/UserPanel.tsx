@@ -12,7 +12,8 @@ export default function UserPanel({ role, token }: UserPanelProps) {
   const [status, setStatus] = useState("Disconnected");
 
   useEffect(() => {
-    const ws = useRef(new WebSocket("ws://localhost:3000"));
+    const ws = new WebSocket("ws://localhost:3000");
+    const myRef = useRef(ws);
 
     ws.onopen = () => {
       ws.send(JSON.stringify({
