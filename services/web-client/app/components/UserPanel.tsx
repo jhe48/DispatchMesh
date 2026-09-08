@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import RiderDashboard from "./RiderPanel";
+import DriverDashboard from "./DriverPanel";
 
 interface UserPanelProps {
     role: string;
@@ -29,9 +31,12 @@ export default function UserPanel({ role, token }: UserPanelProps) {
       ws.current.close()
     };
   }, []);
-  return (
-    <div className="p-8">
-      <p>Status: {status}</p>
-    </div>
+  return ( role==="rider" ?
+    <>
+      <RiderDashboard ws={ws}/>
+    </> :
+    <>
+      <DriverDashboard ws={ws}/>
+    </>
   );
 }
