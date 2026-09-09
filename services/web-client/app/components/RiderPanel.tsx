@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface RiderDashboardProps {
-    ws: React.MutableRefObject<WebSocket | null>;
+    ws: React.RefObject<WebSocket | null>;
     status: string;
 }
 
