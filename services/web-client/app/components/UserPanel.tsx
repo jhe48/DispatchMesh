@@ -14,7 +14,8 @@ export default function UserPanel({ role, token }: UserPanelProps) {
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:3000");
+    const wsURL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3000";
+    ws.current = new WebSocket(wsURL);
     ws.current.onopen = () => {
       ws.current?.send(JSON.stringify({
         type: "auth",
