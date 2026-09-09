@@ -6,20 +6,15 @@ interface DriverDashboardProps {
 }
 
 export default function DriverDashboard({ ws, status }: DriverDashboardProps) {
-    const [PickupLatitude, setPickupLatitude] = useState("");
-    const [PickupLongitude, setPickupLongitude] = useState("");
-    const [DropoffLatitude, setDropoffLatitude] = useState("");
-    const [DropoffLongitude, setDropoffLongitude] = useState("");
-    const []
-    const sendRequestMatch = () => {
+    const [updatedLatitude, setUpdatedLatitude] = useState("");
+    const [updatedLongitude, setUpdatedLongitude] = useState("");
+    const sendUpdatedLocation = () => {
     if (ws.current && status === "Connected") {
       const payload = JSON.stringify({
-        "type": "request_match",
+        "type": "update_location",
         "payload": {
-            "pickup_latitude": PickupLatitude,
-            "pickup_longitude": PickupLongitude,
-            "dropoff_latitude": DropoffLatitude,
-            "dropoff_longitude": DropoffLongitude
+            "latitude": updatedLatitude,
+            "longitude": updatedLongitude
         }
       });
       ws.current.send(payload);
@@ -27,15 +22,12 @@ export default function DriverDashboard({ ws, status }: DriverDashboardProps) {
     }
     return (
         <>
-        <p>RIDER</p>
-        <p>Pickup Coordinates</p>
-        <input type="text" inputMode="numeric" onChange={(e) => setPickupLatitude(e.target.value)} maxLength="10" placeholder="Pickup Latitude" />
-        <input type="text" inputMode="numeric" onChange={(e) => setPickupLongitude(e.target.value)} maxLength="10" placeholder="Pickup Longitude" />
-        <p>Dropoff Coordinates</p>
-        <input type="text" inputMode="numeric" onChange={(e) => setDropoffLatitude(e.target.value)} maxLength="10" placeholder="Dropoff Latitude" />
-        <input type="text" inputMode="numeric" onChange={(e) => setDropoffLongitude(e.target.value)} maxLength="10" placeholder="Dropoff Longitude" />
-        <button className="disabled:cursor-not-allowed cursor-pointer" onClick={sendRequestMatch} disabled={!(status === "Connected")}>
-            Request Match
+        <p>DRIVER</p>
+        <p>Update your Coordinates</p>
+        <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLatitude(e.target.value)} maxLength="10" placeholder="Update Latitude" />
+        <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLongitude(e.target.value)} maxLength="10" placeholder="Update Longitude" />
+        <button className="disabled:cursor-not-allowed cursor-pointer" onClick={sendUpdatedLocation} disabled={!(status === "Connected")}>
+            Update Location
         </button>
         </>
     );
