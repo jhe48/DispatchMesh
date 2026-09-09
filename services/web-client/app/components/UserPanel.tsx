@@ -11,12 +11,12 @@ interface UserPanelProps {
 
 export default function UserPanel({ role, token }: UserPanelProps) {
   const [status, setStatus] = useState("Disconnected");
-  const ws = useRef(new WebSocket("ws://localhost:3000"));
+  const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-
+    ws.current = new WebSocket("ws://localhost:3000");
     ws.current.onopen = () => {
-      ws.current.send(JSON.stringify({
+      ws.current?.send(JSON.stringify({
         type: "auth",
         payload: token
       }));
@@ -28,15 +28,15 @@ export default function UserPanel({ role, token }: UserPanelProps) {
       console.log("JWT Validity: ", event.data);
     }  
     return () => {
-      ws.current.close()
+      ws.current?.close()
     };
   }, []);
   return ( role==="rider" ?
     <>
-      <RiderDashboard ws={ws}/>
+      <RiderDashboard ws={ws} status={status}/>
     </> :
     <>
-      <DriverDashboard ws={ws}/>
+      <DriverDashboard ws={ws} status={status}/>
     </>
   );
 }
