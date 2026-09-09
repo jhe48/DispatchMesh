@@ -6,20 +6,20 @@ interface RiderDashboardProps {
 }
 
 export default function RiderDashboard({ ws, status }: RiderDashboardProps) {
-    const [PickupLatitude, setPickupLatitude] = useState("");
-    const [PickupLongitude, setPickupLongitude] = useState("");
-    const [DropoffLatitude, setDropoffLatitude] = useState("");
-    const [DropoffLongitude, setDropoffLongitude] = useState("");
+    const [pickupLatitude, setPickupLatitude] = useState("");
+    const [pickupLongitude, setPickupLongitude] = useState("");
+    const [dropoffLatitude, setDropoffLatitude] = useState("");
+    const [dropoffLongitude, setDropoffLongitude] = useState("");
     
     const sendRequestMatch = () => {
     if (ws.current && status === "Connected") {
       const payload = JSON.stringify({
         "type": "request_match",
         "payload": {
-            "pickup_latitude": PickupLatitude,
-            "pickup_longitude": PickupLongitude,
-            "dropoff_latitude": DropoffLatitude,
-            "dropoff_longitude": DropoffLongitude
+            "pickup_latitude": pickupLatitude,
+            "pickup_longitude": pickupLongitude,
+            "dropoff_latitude": dropoffLatitude,
+            "dropoff_longitude": dropoffLongitude
         }
       });
       ws.current.send(payload);
