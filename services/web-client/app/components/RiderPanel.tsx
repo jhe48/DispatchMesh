@@ -1,5 +1,16 @@
 import { useState } from "react";
 
+interface IncomingMessage {
+    type: string;
+    driver_id?: string;
+    rider?: string;
+    pickup_latitude?: number;
+    pickup_longitude?: number;
+    dropoff_latitude?: number;
+    dropoff_longitude?: number;
+    
+}
+
 interface RiderDashboardProps {
     ws: React.RefObject<WebSocket | null>;
     status: string;
