@@ -24,20 +24,24 @@ subscribeToChannel("trip.matched", (message) => {
     for (const [ws, id] of active_connections.entries()) {
       if (id == received_rider_Id) {
         ws.send(JSON.stringify({ 
-          type: "Match_Found", 
-          role: "Rider",
-          driver_id: received_driver_Id
+          type: "match_found", 
+          payload: {
+            role: "Rider",
+            driver_id: received_driver_Id
+          }
         }));
       }
       if (id == received_driver_Id) {
         ws.send(JSON.stringify({ 
-          type: "New_Ride", 
-          role: "Driver",
-          rider: received_rider_Id,
-          pickup_latitude: received_pickup_latitude,
-          pickup_longitude: received_pickup_longitude,
-          dropoff_latitude: received_dropoff_latitude,
-          dropoff_longitude: received_dropoff_longitude 
+          type: "new_ride",
+          payload: {
+            role: "Driver",
+            rider: received_rider_Id,
+            pickup_latitude: received_pickup_latitude,
+            pickup_longitude: received_pickup_longitude,
+            dropoff_latitude: received_dropoff_latitude,
+            dropoff_longitude: received_dropoff_longitude
+          } 
         }));
       }
     } 
