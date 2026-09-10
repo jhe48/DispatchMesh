@@ -73,14 +73,19 @@ subscribeToChannel("driver.location.updated", (message) => {
 subscribeToChannel("trip.cancelled", (message) => {
   try {
     const received_message = JSON.parse(message);
-    const received_rider_id = received_message.rider_id, received_driver_id = received_message.driver_id;
+    const received_trip_id = received_message.trip_id, 
+    received_rider_id = received_message.rider_id, 
+    received_driver_id = received_message.driver_id, 
+    received_status = received_message.status;
     for (const [ws, id] of active_connections.entries()) {
       if (id == received_rider_id || id == received_driver_id) {
         ws.send(JSON.stringify({
           "type": "cancel_trip",
           "payload": {
+            "trip_id": received_trip_id,
             "rider_id": received_rider_id,
-            "driver_id": received_driver_id
+            "driver_id": received_driver_id,
+            "trip_status": received_status
           }
         }));
       }

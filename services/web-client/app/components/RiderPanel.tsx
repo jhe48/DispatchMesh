@@ -8,6 +8,8 @@ interface IncomingMessage {
         rider_id?: string;
         latitude?: number;
         longitude?: number;
+        trip_id?: string;
+        trip_status?: string;
     }
 }
 
