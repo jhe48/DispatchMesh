@@ -2,21 +2,22 @@ import { useState } from "react";
 
 interface IncomingMessage {
     type: string;
-    driver_id?: string;
-    rider?: string;
-    pickup_latitude?: number;
-    pickup_longitude?: number;
-    dropoff_latitude?: number;
-    dropoff_longitude?: number;
-    
+    payload?: {
+        role?: string;
+        driver_id?: string;
+        rider_id?: string;
+        latitude?: number;
+        longitude?: number;
+    }
 }
 
 interface RiderDashboardProps {
     ws: React.RefObject<WebSocket | null>;
     status: string;
+    serverMessage: IncomingMessage | null;
 }
 
-export default function RiderDashboard({ ws, status }: RiderDashboardProps) {
+export default function RiderDashboard({ ws, status, serverMessage }: RiderDashboardProps) {
     const [pickupLatitude, setPickupLatitude] = useState("");
     const [pickupLongitude, setPickupLongitude] = useState("");
     const [dropoffLatitude, setDropoffLatitude] = useState("");
@@ -48,6 +49,9 @@ export default function RiderDashboard({ ws, status }: RiderDashboardProps) {
         <button className="disabled:cursor-not-allowed cursor-pointer" onClick={sendRequestMatch} disabled={!(status === "Connected")}>
             Request Match
         </button>
+        {serverMessage?.type == "match_found" && (
+            <p className="font-bold text-green-600">Match Found! Your Driver is: {serverMessage?.payload?.driver_id}</p>
+        )}
         </>
     );
 } 

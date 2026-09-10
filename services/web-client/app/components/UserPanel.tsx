@@ -31,10 +31,13 @@ export default function UserPanel({ role, token }: UserPanelProps) {
       const data = JSON.parse(event.data);
 
       switch (data.type) {
-        case "Match_Found":
+        case "match_found":
           setServerMessage(data);
           break;
-        case "New_Ride":
+        case "new_ride":
+          setServerMessage(data);
+          break;
+        case "driver_location":
           setServerMessage(data);
           break;
         case "cancel_trip":
