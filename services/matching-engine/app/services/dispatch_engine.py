@@ -25,6 +25,8 @@ class DispatchEngine:
 
         """
         try: 
+            conn = get_connection()
+            cur = conn.cursor()
             cur.execute("""
                 SELECT trip_id
                 FROM Trips
@@ -48,8 +50,6 @@ class DispatchEngine:
                 ride_type = new_match_request.ride_type,
                 created_at = new_match_request.requested_at,
             )
-            conn = get_connection()
-            cur = conn.cursor()
             query_driver_status_pending = 'pending'
             query_driver_status_matched = 'matched'
             
