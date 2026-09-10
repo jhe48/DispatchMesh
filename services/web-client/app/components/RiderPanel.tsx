@@ -9,7 +9,7 @@ interface IncomingMessage {
         latitude?: number;
         longitude?: number;
         trip_id?: string;
-        status?: string;
+        trip_status?: string;
     }
 }
 
@@ -26,18 +26,26 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
     const [dropoffLongitude, setDropoffLongitude] = useState("");
     
     const sendRequestMatch = () => {
-    if (ws.current && status === "Connected") {
-      const payload = JSON.stringify({
-        "type": "request_match",
-        "payload": {
-            "pickup_latitude": pickupLatitude,
-            "pickup_longitude": pickupLongitude,
-            "dropoff_latitude": dropoffLatitude,
-            "dropoff_longitude": dropoffLongitude
+        if (ws.current && status === "Connected") {
+            const payload = JSON.stringify({
+                "type": "request_match",
+                "payload": {
+                    "pickup_latitude": pickupLatitude,
+                    "pickup_longitude": pickupLongitude,
+                    "dropoff_latitude": dropoffLatitude,
+                    "dropoff_longitude": dropoffLongitude
+            }});
+            ws.current.send(payload);
         }
-      });
-      ws.current.send(payload);
     }
+    const sendCancelTrip = () => {
+        if (ws.current && status === "Connected" && serverMessage?.payload?.trip_id) {
+            const payload = JSON.stringify({
+                "type": "cancel_trip",
+                "payload": serverMessage.payload.trip_id
+            });
+            ws.current.send(payload);
+        }
     }
     return (
         <>
@@ -48,11 +56,21 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
         <p>Dropoff Coordinates</p>
         <input type="text" inputMode="numeric" onChange={(e) => setDropoffLatitude(e.target.value)} maxLength="10" placeholder="Dropoff Latitude" />
         <input type="text" inputMode="numeric" onChange={(e) => setDropoffLongitude(e.target.value)} maxLength="10" placeholder="Dropoff Longitude" />
-        <button className="disabled:cursor-not-allowed cursor-pointer" onClick={sendRequestMatch} disabled={!(status === "Connected")}>
+        <br></br>
+        <br></br>
+        <button className="disabled:cursor-not-allowed cursor-pointer bg-green-500 text-black p-2 rounded" onClick={sendRequestMatch} disabled={!(status === "Connected")}>
             Request Match
         </button>
         {serverMessage?.type == "match_found" && (
             <p className="font-bold text-green-600">Match Found! Your Driver is: {serverMessage?.payload?.driver_id}</p>
+        )}
+        <br></br>
+        <br></br>
+        <button className="cursor-pointer bg-red-500 text-white p-2 rounded" onClick={sendCancelTrip}>
+            Cancel Trip
+        </button>
+        {serverMessage?.type == "cancel_trip" && (
+            <p className="font-bold text-red-600">Cancelled Trip {serverMessage?.payload?.trip_id}</p>
         )}
         </>
     );

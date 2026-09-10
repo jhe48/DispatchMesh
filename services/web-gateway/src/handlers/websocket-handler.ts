@@ -31,7 +31,7 @@ subscribeToChannel("trip.matched", (message) => {
             "role": "Rider",
             "driver_id": received_driver_id,
             "trip_id": received_trip_id,
-            "status": received_trip_status
+            "trip_status": received_trip_status
           }
         }));
       }
@@ -46,7 +46,7 @@ subscribeToChannel("trip.matched", (message) => {
             "dropoff_latitude": received_dropoff_latitude,
             "dropoff_longitude": received_dropoff_longitude,
             "trip_id": received_trip_id,
-            "status": received_trip_status
+            "trip_status": received_trip_status
           } 
         }));
       }
