@@ -15,32 +15,38 @@ const JWT_KEY = process.env.JWT_SECRET_KEY || "default_fallback_for_local_dev";
 subscribeToChannel("trip.matched", (message) => {
   try {
     const received_message = JSON.parse(message);
-    const received_rider_Id = received_message.rider_id;
-    const received_driver_Id = received_message.driver_id;
+    const received_rider_id = received_message.rider_id;
+    const received_driver_id = received_message.driver_id;
     // Pickup Location
     const received_pickup_latitude = received_message.pickup_latitude, received_pickup_longitude = received_message.pickup_longitude;
     // Dropoff Location
     const received_dropoff_latitude = received_message.dropoff_latitude, received_dropoff_longitude = received_message.dropoff_longitude;
+    const received_trip_id = received_message.trip_id,
+    received_trip_status = received_message.status;
     for (const [ws, id] of active_connections.entries()) {
-      if (id == received_rider_Id) {
+      if (id == received_rider_id) {
         ws.send(JSON.stringify({ 
-          type: "match_found", 
-          payload: {
-            role: "Rider",
-            driver_id: received_driver_Id
+          "type": "match_found", 
+          "payload": {
+            "role": "Rider",
+            "driver_id": received_driver_id,
+            "trip_id": received_trip_id,
+            "status": received_trip_status
           }
         }));
       }
-      if (id == received_driver_Id) {
+      if (id == received_driver_id) {
         ws.send(JSON.stringify({ 
-          type: "new_ride",
-          payload: {
-            role: "Driver",
-            rider: received_rider_Id,
-            pickup_latitude: received_pickup_latitude,
-            pickup_longitude: received_pickup_longitude,
-            dropoff_latitude: received_dropoff_latitude,
-            dropoff_longitude: received_dropoff_longitude
+          "type": "new_ride",
+          "payload": {
+            "role": "Driver",
+            "rider": received_rider_id,
+            "pickup_latitude": received_pickup_latitude,
+            "pickup_longitude": received_pickup_longitude,
+            "dropoff_latitude": received_dropoff_latitude,
+            "dropoff_longitude": received_dropoff_longitude,
+            "trip_id": received_trip_id,
+            "status": received_trip_status
           } 
         }));
       }

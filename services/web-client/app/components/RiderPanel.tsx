@@ -9,7 +9,7 @@ interface IncomingMessage {
         latitude?: number;
         longitude?: number;
         trip_id?: string;
-        trip_status?: string;
+        status?: string;
     }
 }
 
