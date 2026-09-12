@@ -115,7 +115,8 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
             ws.send(JSON.stringify({
               "type": "match_found",
               "payload": {
-                "trip_id": active_trip_id
+                "trip_id": active_trip_id.trip_id,
+                "driver_id": active_trip_id.driver_id
               }
             }));
           }

@@ -25,12 +25,15 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
     const [dropoffLatitude, setDropoffLatitude] = useState("");
     const [dropoffLongitude, setDropoffLongitude] = useState("");
     const [activeTripID, setActiveTripID] = useState<string | null>(null);
+    const [assignedDriverID, setAssignedDriverID] = useState<string | null>(null);
 
     useEffect(() => {
         if (serverMessage?.type == "match_found") {
             setActiveTripID(serverMessage?.payload?.trip_id ?? null);
+            setAssignedDriverID(serverMessage?.payload?.driver_id ?? null);
         } else if (serverMessage?.type === "cancel_trip") {
             setActiveTripID(null);
+            setAssignedDriverID(null);
         }
     }, [serverMessage]);
 
@@ -76,7 +79,7 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
             </button>
         )}
         {serverMessage?.type == "match_found" && (
-            <p className="font-bold text-green-600">Match Found! Your Driver is: {serverMessage?.payload?.driver_id}</p>
+            <p className="font-bold text-green-600">Match Found! Your Driver is: {assignedDriverID}</p>
         )}
         <br></br>
         <br></br>

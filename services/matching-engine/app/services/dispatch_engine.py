@@ -28,7 +28,7 @@ class DispatchEngine:
             conn = get_connection()
             cur = conn.cursor()
             cur.execute("""
-                SELECT trip_id
+                SELECT trip_id, driver_id
                 FROM Trips
                 WHERE rider_id = %s AND status IN %s
                 LIMIT 1;""",
@@ -36,7 +36,10 @@ class DispatchEngine:
             rider_has_trip = cur.fetchone()
             if rider_has_trip:
                 print("Rider has an Active Trip!")
-                return rider_has_trip[0]
+                return {
+                    "trip_id": rider_has_trip[0], 
+                    "driver_id": rider_has_trip[1]
+                    }
             return False
         except Exception as e:
             print(f"Database Error during Trip Search: {e}")

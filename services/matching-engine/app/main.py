@@ -72,7 +72,7 @@ async def existing_ride_check(rider_id: str):
     trip_found = await _dispatch_engine.trip_exists(rider_id)
     if not trip_found:
         raise HTTPException(status_code=404, detail="No Trips Found...")
-    return { "trip": trip_found }
+    return trip_found
 
 @app.post("/match")
 async def match_request_check(request: MatchRequest) -> Optional[dict]:
