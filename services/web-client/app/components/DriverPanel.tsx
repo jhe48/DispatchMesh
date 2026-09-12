@@ -1,8 +1,22 @@
 import { useState } from "react";
 
+interface IncomingMessage {
+    type: string;
+    payload?: {
+        role?: string;
+        driver_id?: string;
+        rider_id?: string;
+        latitude?: number;
+        longitude?: number;
+        trip_id?: string;
+        trip_status?: string;
+    }
+}
+
 interface DriverDashboardProps {
     ws: React.RefObject<WebSocket | null>;
     status: string;
+    serverMessage: IncomingMessage | null;
 }
 
 export default function DriverDashboard({ ws, status }: DriverDashboardProps) {
