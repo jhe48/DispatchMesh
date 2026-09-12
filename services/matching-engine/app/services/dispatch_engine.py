@@ -30,9 +30,9 @@ class DispatchEngine:
             cur.execute("""
                 SELECT trip_id
                 FROM Trips
-                WHERE rider_id = %s AND status IN ("matched", "en_route", "arrived", "in_progress")
+                WHERE rider_id = %s AND status IN %s
                 LIMIT 1;""",
-                (rider_id, ))
+                (rider_id, ("matched", "en_route", "arrived", "in_progress")))
             rider_has_trip = cur.fetchone()
             if rider_has_trip:
                 print("Rider has an Active Trip!")
