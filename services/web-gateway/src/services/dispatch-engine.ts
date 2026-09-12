@@ -8,6 +8,23 @@ export class DispatchEngine {
   /**
    * Find and assign the best available driver for the given rider.
    */
+   async trip_exists(rider_id: string): Promise<string | null> {
+    const trip_exists_response = await fetch(`http://matching-engine:8000/trip/active/${rider_id}`, {
+      method: `GET`
+    });
+    if (trip_exists_response.status == 404) {
+      return null;
+    }
+    if (!trip_exists_response.ok) {
+      throw new Error(`Python backend failed with status: ${trip_exists_response.status}`);
+    }
+    const data = await trip_exists_response.json();
+    return data.trip;
+  }
+  
+  /**
+   * Find and assign the best available driver for the given rider.
+   */
   async findMatch(match_request: MatchRequest): Promise<void> {
         const find_match_response = await fetch(`http://matching-engine:8000/match`, {
         method: `POST`,

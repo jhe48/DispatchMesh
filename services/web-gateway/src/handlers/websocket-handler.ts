@@ -110,6 +110,15 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
         try {
           const decoded = jwt.verify(received_message.payload, JWT_KEY) as { userId: string };
           active_connections.set(ws, decoded.userId);
+          const active_trip_id = await dispatchEngine.trip_exists(decoded.userId);
+          if (active_trip_id) {
+            ws.send(JSON.stringify({
+              "type": "match_found",
+              "payload": {
+                "trip_id": active_trip_id
+              }
+            }));
+          }
           ws.send(JSON.stringify({ status: "Success", message: "Authenticated Successfully!" }));
           console.log(`User ${decoded.userId} connected!`);
         } catch (err) {

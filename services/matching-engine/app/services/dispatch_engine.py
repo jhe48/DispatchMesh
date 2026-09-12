@@ -17,6 +17,34 @@ import uuid
 class DispatchEngine:
     """Orchestrates rider-driver matching and trip lifecycle events."""
 
+    async def trip_exists(self, rider_id: str) -> str:
+        """Checks if rider has an existing trip.
+
+        Args:
+            rider_id: rider ID to check against trips 
+
+        """
+        try: 
+            conn = get_connection()
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT trip_id
+                FROM Trips
+                WHERE rider_id = %s AND status IN ("matched", "en_route", "arrived", "in_progress")
+                LIMIT 1;""",
+                (rider_id, ))
+            rider_has_trip = cur.fetchone()
+            if rider_has_trip:
+                print("Rider has an Active Trip!")
+                return rider_has_trip[0]
+            return False
+        except Exception as e:
+            print(f"Database Error during Trip Search: {e}")
+            return None
+        finally: 
+            if 'cur' in locals():
+                cur.close()
+
     async def find_match(self, new_match_request: MatchRequest) -> Optional[TripState]:
         """Locate the best available driver for the given rider.
 

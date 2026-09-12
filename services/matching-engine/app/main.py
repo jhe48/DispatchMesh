@@ -66,6 +66,14 @@ async def health_check():
     return {"status": "ok"}
 
 _dispatch_engine = DispatchEngine()
+
+@app.get("/trip/active/{rider_id}")
+async def existing_ride_check(rider_id: str):
+    trip_found = await _dispatch_engine.trip_exists(rider_id)
+    if not trip_found:
+        raise HTTPException(status_code=404, detail="No Trips Found...")
+    return { "trip": trip_found }
+
 @app.post("/match")
 async def match_request_check(request: MatchRequest) -> Optional[dict]:
     match_found = await _dispatch_engine.find_match(request)
