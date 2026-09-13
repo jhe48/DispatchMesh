@@ -68,8 +68,8 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
             <div>
                 <br></br>
                 <p className="font-bold text-blue-500">New Ride for {newRider}!</p> 
-                <p className="font-bold text-yellow-400">Pickup at: (Latitude){pickupLatitude}, (Longitude){pickupLongitude}</p>
-                <p className="font-bold text-yellow-400">Dropoff to: (Latitude){dropoffLatitude}, (Longitude){dropoffLongitude}</p>
+                <p className="font-bold text-yellow-400">Pickup at: ({pickupLatitude}, {pickupLongitude})</p>
+                <p className="font-bold text-yellow-400">Dropoff to: ({dropoffLatitude}, {dropoffLongitude})</p>
             </div>
         )}
         </div>
