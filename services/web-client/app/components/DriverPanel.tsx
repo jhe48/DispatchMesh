@@ -53,7 +53,7 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
     }
     }
     return (
-        <div className="border-4 border-yellow-500 rounded-xl p-6 bg-gray-50 shadow-lg min-h-[600px]">
+        <div className="border-4 border-yellow-500 rounded-xl p-6 bg-gray-950 shadow-lg min-h-[600px]">
         <p>DRIVER</p>
         <p>Update your Coordinates</p>
         <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLatitude(e.target.value)} maxLength={10} placeholder="Update Latitude" />
@@ -63,7 +63,7 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
         </button>
         {serverMessage?.type == 'new_ride' && (
             <div>
-                <p className="font-bold text-blue-600">New Ride for {newRider}! 
+                <p className="font-bold text-blue-600">New Ride for {newRider}!</p> 
                 <br></br>
                 <p className="font-bold text-yellow-600">Pickup at: (Latitude){pickupLatitude}, (Longitude){pickupLongitude}</p>
                 <br></br>
