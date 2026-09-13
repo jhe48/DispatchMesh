@@ -55,19 +55,21 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
     return (
         <div className="border-4 border-yellow-500 rounded-xl p-6 bg-gray-950 shadow-lg min-h-[600px]">
         <p>DRIVER</p>
+        <br></br>
         <p>Update your Coordinates</p>
         <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLatitude(e.target.value)} maxLength={10} placeholder="Update Latitude" />
         <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLongitude(e.target.value)} maxLength={10} placeholder="Update Longitude" />
-        <button className="disabled:cursor-not-allowed cursor-pointer" onClick={sendUpdatedLocation} disabled={!(status === "Connected")}>
+        <br></br>
+        <br></br>
+        <button className="disabled:cursor-not-allowed cursor-pointer bg-blue-800 text-white p-2 rounded" onClick={sendUpdatedLocation} disabled={!(status === "Connected")}>
             Update Location
         </button>
         {serverMessage?.type == 'new_ride' && (
             <div>
-                <p className="font-bold text-blue-600">New Ride for {newRider}!</p> 
                 <br></br>
-                <p className="font-bold text-yellow-600">Pickup at: (Latitude){pickupLatitude}, (Longitude){pickupLongitude}</p>
-                <br></br>
-                <p className="font-bold text-yellow-600">Dropoff to: (Latitude){dropoffLatitude}, (Longitude){dropoffLongitude}</p>
+                <p className="font-bold text-blue-500">New Ride for {newRider}!</p> 
+                <p className="font-bold text-yellow-400">Pickup at: (Latitude){pickupLatitude}, (Longitude){pickupLongitude}</p>
+                <p className="font-bold text-yellow-400">Dropoff to: (Latitude){dropoffLatitude}, (Longitude){dropoffLongitude}</p>
             </div>
         )}
         </div>
