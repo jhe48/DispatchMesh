@@ -60,7 +60,7 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
         }
     }
     return (
-        <>
+        <div className="border-4 border-blue-500 rounded-xl p-6 bg-gray-50 shadow-lg min-h-[600px]">
         <p>RIDER</p>
         <br></br>
         <p className="font-bold text-yellow-300">Active Trips: <br></br>{activeTripID}</p>
@@ -91,6 +91,6 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
         {serverMessage?.type == "cancel_trip" && (
             <p className="font-bold text-red-600">Cancelled Trip {serverMessage?.payload?.trip_id}</p>
         )}
-        </>
+        </div>
     );
 } 
