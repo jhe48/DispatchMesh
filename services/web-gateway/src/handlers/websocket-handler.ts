@@ -40,7 +40,7 @@ subscribeToChannel("trip.matched", (message) => {
           "type": "new_ride",
           "payload": {
             "role": "Driver",
-            "rider": received_rider_id,
+            "rider_id": received_rider_id,
             "pickup_latitude": received_pickup_latitude,
             "pickup_longitude": received_pickup_longitude,
             "dropoff_latitude": received_dropoff_latitude,
