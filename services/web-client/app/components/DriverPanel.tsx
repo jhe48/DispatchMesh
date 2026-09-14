@@ -1,11 +1,10 @@
-import { setAbortedLogsStyle } from "next/dist/server/node-environment-extensions/console-dim.external";
 import { useEffect, useState } from "react";
 
 interface IncomingMessage {
     type: string;
     payload?: {
         role?: string;
-        rider?: string;
+        rider_id?: string;
         pickup_latitude?: number;
         pickup_longitude?: number;
         dropoff_latitude?: number;
@@ -33,7 +32,7 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
 
     useEffect(() => {
         if (serverMessage?.type === "new_ride") {
-            setNewRider(serverMessage?.payload?.rider ?? null);
+            setNewRider(serverMessage?.payload?.rider_id ?? null);
             setPickupLatitude(serverMessage?.payload?.pickup_latitude ?? null);
             setPickupLongitude(serverMessage?.payload?.pickup_longitude ?? null);
             setDropoffLatitude(serverMessage?.payload?.dropoff_latitude ?? null);
