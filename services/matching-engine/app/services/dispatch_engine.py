@@ -28,7 +28,14 @@ class DispatchEngine:
             conn = get_connection()
             cur = conn.cursor()
             cur.execute("""
-                SELECT trip_id, driver_id, rider_id, pickup_latitude, pickup_longitude, dropoff_latitude, dropoff_longitude
+                SELECT 
+                    trip_id, 
+                    driver_id, 
+                    rider_id, 
+                    ST_Y(pickup_location) AS pickup_latitude, 
+                    ST_X(pickup_location) AS pickup_longitude, 
+                    ST_Y(dropoff_location) AS dropoff_latitude, 
+                    ST_X(dropoff_location) AS dropoff_longitude
                 FROM Trips
                 WHERE (rider_id = %s OR driver_id = %s) AND status IN %s
                 LIMIT 1;""",
