@@ -13,6 +13,10 @@ interface IncomingMessage {
         longitude?: number;
         trip_id?: string;
         trip_status?: string;
+        pickup_latitude: number;  
+        pickup_longitude: number;
+        dropoff_latitude: number;
+        dropoff_longitude?: number;
     }
 }
 
@@ -23,20 +27,32 @@ interface RiderDashboardProps {
 }
 
 export default function RiderDashboard({ ws, status, serverMessage }: RiderDashboardProps) {
-    const [pickupLatitude, setPickupLatitude] = useState("");
-    const [pickupLongitude, setPickupLongitude] = useState("");
-    const [dropoffLatitude, setDropoffLatitude] = useState("");
-    const [dropoffLongitude, setDropoffLongitude] = useState("");
+    const [pickupLatitude, setPickupLatitude] = useState<number | null>(null);
+    const [pickupLongitude, setPickupLongitude] = useState<number | null>(null);
+    const [dropoffLatitude, setDropoffLatitude] = useState<number | null>(null);
+    const [dropoffLongitude, setDropoffLongitude] = useState<number | null>(null);
     const [activeTripID, setActiveTripID] = useState<string | null>(null);
     const [assignedDriverID, setAssignedDriverID] = useState<string | null>(null);
+    const [updatedLatitude, setUpdatedLatitude] = useState<number | null>(null);
+    const [updatedLongitude, setUpdatedLongitude] = useState<number | null>(null);
 
     useEffect(() => {
         if (serverMessage?.type == "match_found") {
             setActiveTripID(serverMessage?.payload?.trip_id ?? null);
             setAssignedDriverID(serverMessage?.payload?.driver_id ?? null);
+            setPickupLatitude(serverMessage?.payload?.pickup_latitude ?? null);
+            setPickupLongitude(serverMessage?.payload?.pickup_longitude ?? null);
+            setDropoffLatitude(serverMessage?.payload?.dropoff_latitude ?? null);
+            setDropoffLongitude(serverMessage?.payload?.dropoff_longitude ?? null);
         } else if (serverMessage?.type === "cancel_trip") {
             setActiveTripID(null);
             setAssignedDriverID(null);
+            setUpdatedLatitude(null);
+            setUpdatedLongitude(null);
+        }
+        else if (serverMessage?.type === "driver_location") {
+            setUpdatedLatitude(serverMessage?.payload?.latitude ?? null);
+            setUpdatedLongitude(serverMessage?.payload?.longitude ?? null);
         }
     }, [serverMessage]);
 
@@ -65,11 +81,11 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
 
     const handleMapClick = (lat: number, lng: number) => {
         if (!pickupLatitude) {
-            setPickupLatitude(lat.toString());
-            setPickupLongitude(lng.toString());
+            setPickupLatitude(lat);
+            setPickupLongitude(lng);
         } else if (!dropoffLatitude) {
-            setDropoffLatitude(lat.toString());
-            setDropoffLongitude(lng.toString());
+            setDropoffLatitude(lat);
+            setDropoffLongitude(lng);
         }
     }
     return (
@@ -92,12 +108,15 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
         </p>
         <br></br>
         <MapUI onMapClick={handleMapClick} markers={[
-            ...(pickupLatitude ? [{ latitude: parseFloat(pickupLatitude), longitude: parseFloat(pickupLongitude) }] : []),
-            ...(dropoffLatitude ? [{ latitude: parseFloat(dropoffLatitude), longitude: parseFloat(dropoffLongitude) }] : [])
+            ...(pickupLatitude && pickupLongitude ? [{ latitude: pickupLatitude, longitude: pickupLongitude, type: "pickup" as const }] : []),
+            ...(dropoffLatitude && dropoffLongitude? [{ latitude: dropoffLatitude, longitude: dropoffLongitude, type: "dropoff" as const }] : []),
+            ...(updatedLatitude && updatedLongitude ? [{ latitude: updatedLatitude, longitude: updatedLongitude, type: "driver" as const }] : [])
             ]}
         />
         <br></br>
-        <button className="cursor-pointer bg-blue-400 text-white p-2 rounded" onClick={() => { setPickupLatitude(""); setDropoffLatitude(""); }} disabled={!(status === "Connected")}> Clear Map </button>
+        {!activeTripID && (
+            <button className="cursor-pointer bg-blue-400 text-white p-2 rounded" onClick={() => { setPickupLatitude(null); setDropoffLatitude(null); }} disabled={!(status === "Connected")}> Clear Map </button>
+        )}
 
         <br></br>
         <br></br>

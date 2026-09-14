@@ -2,19 +2,34 @@ import { useMapEvents, MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css"
 import L from 'leaflet';
 
-const DefaultIcon = L.icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
+const pickupIcon = new L.DivIcon({
+    className: 'custom-icon',
+    html: `<div style="background-color: red; width: 20px; height: 20px; border-radius:
+        50%; border: 2px solid white;"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
 });
 
-L.Marker.prototype.options.icon = DefaultIcon;
+const dropoffIcon = new L.DivIcon({
+    className: 'custom-icon',
+    html: `<div style="background-color: green; width: 20px; height: 20px; border-radius:
+        50%; border: 2px solid white;"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+});
+
+const driverIcon = new L.DivIcon({
+    className: 'custom-icon',
+    html: `<div style="background-color: blue; width: 20px; height: 20px; border-radius:
+        50%; border: 2px solid white;"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+});
 
 type Coordinate = {
     latitude: number;
     longitude: number;
+    type: "pickup" | "dropoff" | "driver";
 };
 
 interface MapProps {
@@ -40,9 +55,13 @@ export default function MapUI({ markers, onMapClick }: MapProps) {
         <MapContainer center={[40.72, -73.55]} zoom={13} style={{ height: "500px", width: "100%" }}>
             <MapClickHandler onMapClick={onMapClick} />
             <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'></TileLayer>
-            {markers.map((marker, index) => (
-                <Marker key={index} position={[marker.latitude, marker.longitude]} />
-            ))}
+            {markers.map((marker, index) => {
+                let iconToUse = pickupIcon;
+                if (marker.type === "dropoff") iconToUse = dropoffIcon;
+                if (marker.type === "driver") iconToUse = driverIcon;
+                return <Marker key={index} position={[marker.latitude, marker.longitude]} icon={iconToUse} />
+            }
+            )}
         </MapContainer>
         </>
     )

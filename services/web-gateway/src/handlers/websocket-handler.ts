@@ -130,7 +130,11 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
               "type": "match_found",
               "payload": {
                 "trip_id": active_trip_data.trip_id,
-                "driver_id": active_trip_data.driver_id
+                "driver_id": active_trip_data.driver_id,
+                "pickup_latitude": active_trip_data.pickup_latitude, 
+                "pickup_longitude": active_trip_data.pickup_longitude, 
+                "dropoff_latitude": active_trip_data.dropoff_latitude, 
+                "dropoff_longitude": active_trip_data.dropoff_longitude
               }
             }));
             }

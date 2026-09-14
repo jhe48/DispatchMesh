@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { parse } from "path";
 
 const MapUI = dynamic(() => import('./Map'), { ssr: false });
 
@@ -24,8 +25,8 @@ interface DriverDashboardProps {
 }
 
 export default function DriverDashboard({ ws, status, serverMessage }: DriverDashboardProps) {
-    const [updatedLatitude, setUpdatedLatitude] = useState("");
-    const [updatedLongitude, setUpdatedLongitude] = useState("");
+    const [updatedLatitude, setUpdatedLatitude] = useState<number | null>(null);
+    const [updatedLongitude, setUpdatedLongitude] = useState<number | null>(null);
     const [newRider, setNewRider] = useState<string | null>(null);
     const [pickupLatitude, setPickupLatitude] = useState<number | null>(null);
     const [pickupLongitude, setPickupLongitude] = useState<number | null>(null);
@@ -80,15 +81,16 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
         <p>DRIVER</p>
         <br></br>
         <p>Update your Coordinates</p>
-        <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLatitude(e.target.value)} maxLength={10} placeholder="Update Latitude" />
-        <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLongitude(e.target.value)} maxLength={10} placeholder="Update Longitude" />
+        <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLatitude(parseFloat(e.target.value))} maxLength={10} placeholder="Update Latitude" />
+        <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLongitude(parseFloat(e.target.value))} maxLength={10} placeholder="Update Longitude" />
         <br></br>
         <br></br>
         <p className="font-bold text-blue-400" text-center>
         <br></br>
         <MapUI markers={[
-            ...(pickupLatitude && pickupLongitude ? [{ latitude: pickupLatitude, longitude: pickupLongitude }] : []),
-            ...(dropoffLatitude && dropoffLongitude ? [{ latitude: dropoffLatitude, longitude: dropoffLongitude }] : [])
+            ...(updatedLatitude && updatedLongitude ? [{ latitude: updatedLatitude, longitude: updatedLongitude, type: "driver" as const }] : []),
+            ...(pickupLatitude && pickupLongitude ? [{ latitude: pickupLatitude, longitude: pickupLongitude, type: "pickup" as const }] : []),
+            ...(dropoffLatitude && dropoffLongitude ? [{ latitude: dropoffLatitude, longitude: dropoffLongitude, type: "dropoff" as const }] : [])
             ]} />
         </p>
         <br></br>
