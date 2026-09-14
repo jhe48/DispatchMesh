@@ -78,7 +78,7 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
             Request Match
             </button>
         )}
-        {serverMessage?.type == "match_found" && (
+        {activeTripID && (
             <p className="font-bold text-green-600">Match Found! Your Driver is: {assignedDriverID}</p>
         )}
         <br></br>
