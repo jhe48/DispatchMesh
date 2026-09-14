@@ -100,7 +100,7 @@ class DispatchEngine:
                 cur.execute("""
                     SELECT driver_id 
                     FROM Drivers 
-                    WHERE status = %s 
+                    WHERE status = %s and driver_id='-1'
                     ORDER BY ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326)) 
                     LIMIT 1;""", 
                 (query_driver_status_pending, 
