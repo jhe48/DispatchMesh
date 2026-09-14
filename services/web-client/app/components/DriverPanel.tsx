@@ -85,14 +85,14 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
         <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLongitude(parseFloat(e.target.value))} maxLength={10} placeholder="Update Longitude" />
         <br></br>
         <br></br>
-        <p className="font-bold text-blue-400" text-center>
+        <div className="font-bold text-blue-400" text-center>
         <br></br>
         <MapUI markers={[
             ...(updatedLatitude && updatedLongitude ? [{ latitude: updatedLatitude, longitude: updatedLongitude, type: "driver" as const }] : []),
             ...(pickupLatitude && pickupLongitude ? [{ latitude: pickupLatitude, longitude: pickupLongitude, type: "pickup" as const }] : []),
             ...(dropoffLatitude && dropoffLongitude ? [{ latitude: dropoffLatitude, longitude: dropoffLongitude, type: "dropoff" as const }] : [])
             ]} />
-        </p>
+        </div>
         <br></br>
         <button className="disabled:cursor-not-allowed cursor-pointer bg-blue-800 text-white p-2 rounded" onClick={sendUpdatedLocation} disabled={!(status === "Connected")}>
             Update Location

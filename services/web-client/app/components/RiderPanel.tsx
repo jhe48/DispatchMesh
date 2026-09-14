@@ -103,9 +103,8 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
             <input type="text" inputMode="numeric" onChange={(e) => setDropoffLatitude(e.target.value)} maxLength={10} placeholder="Dropoff Latitude" />
             <input type="text" inputMode="numeric" onChange={(e) => setDropoffLongitude(e.target.value)} maxLength={10} placeholder="Dropoff Longitude" />
         */}
-        <p className="font-bold text-blue-400" text-center>
+        <div className="font-bold text-blue-400" text-center>
         {!pickupLatitude ? "Click Map to select Pickup" : !dropoffLatitude ? "Click Map to select Dropoff" : "Ready to Request Match!"}
-        </p>
         <br></br>
         <MapUI onMapClick={handleMapClick} markers={[
             ...(pickupLatitude && pickupLongitude ? [{ latitude: pickupLatitude, longitude: pickupLongitude, type: "pickup" as const }] : []),
@@ -113,6 +112,7 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
             ...(updatedLatitude && updatedLongitude ? [{ latitude: updatedLatitude, longitude: updatedLongitude, type: "driver" as const }] : [])
             ]}
         />
+        </div>
         <br></br>
         {!activeTripID && (
             <button className="cursor-pointer bg-blue-400 text-white p-2 rounded" onClick={() => { setPickupLatitude(null); setDropoffLatitude(null); }} disabled={!(status === "Connected")}> Clear Map </button>
