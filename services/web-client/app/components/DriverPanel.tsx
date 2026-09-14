@@ -39,19 +39,37 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
             setDropoffLongitude(serverMessage?.payload?.dropoff_longitude ?? null);
             setActiveTripID(serverMessage?.payload?.trip_id ?? null);
         }
+        else if (serverMessage?.type === "cancel_trip") {
+            setNewRider(null);
+            setPickupLatitude(null);
+            setPickupLongitude(null);
+            setDropoffLatitude(null);
+            setDropoffLongitude(null);
+            setActiveTripID(null);
+        }
     }, [serverMessage]); 
 
     const sendUpdatedLocation = () => {
-    if (ws.current && status === "Connected") {
-      const payload = JSON.stringify({
-        "type": "update_location",
-        "payload": {
-            "latitude": updatedLatitude,
-            "longitude": updatedLongitude
+        if (ws.current && status === "Connected") {
+        const payload = JSON.stringify({
+            "type": "update_location",
+            "payload": {
+                "latitude": updatedLatitude,
+                "longitude": updatedLongitude
+            }
+        });
+        ws.current.send(payload);
         }
-      });
-      ws.current.send(payload);
     }
+
+    const sendCancelTrip = () => {
+        if (ws.current && status === "Connected" && serverMessage?.payload?.trip_id) {
+            const payload = JSON.stringify({
+                "type": "cancel_trip",
+                "payload": serverMessage.payload.trip_id
+            });
+            ws.current.send(payload);
+        }
     }
     return (
         <div className="border-4 border-yellow-500 rounded-xl p-6 bg-gray-950 shadow-lg min-h-[600px]">
@@ -71,7 +89,15 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
                 <p className="font-bold text-blue-500">New Ride for {newRider}!</p> 
                 <p className="font-bold text-yellow-400">Pickup at: ({pickupLatitude}, {pickupLongitude})</p>
                 <p className="font-bold text-yellow-400">Dropoff to: ({dropoffLatitude}, {dropoffLongitude})</p>
+                <br></br>
+                <br></br>
+                <button className="disabled:cursor-not-allowed cursor-pointer bg-red-500 text-white p-2 rounded" onClick={sendCancelTrip} disabled={!(status === "Connected")}>
+                    Cancel Trip
+                </button>
             </div>
+        )}
+        {serverMessage?.type == "cancel_trip" && (
+            <p className="font-bold text-red-600">Cancelled Trip {serverMessage?.payload?.trip_id}</p>
         )}
         </div>
     );
