@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+
+const MapUI = dynamic(() => import('./Map'), { ssr: false });
 
 interface IncomingMessage {
     type: string;

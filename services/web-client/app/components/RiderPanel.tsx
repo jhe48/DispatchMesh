@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import dynamic from 'next/dynamic';
+
+const MapUI = dynamic(() => import('./Map'), { ssr: false });
 
 interface IncomingMessage {
     type: string;
@@ -59,18 +62,43 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
             ws.current.send(payload);
         }
     }
+
+    const handleMapClick = (lat: number, lng: number) => {
+        if (!pickupLatitude) {
+            setPickupLatitude(lat.toString());
+            setPickupLongitude(lng.toString());
+        } else if (!dropoffLatitude) {
+            setDropoffLatitude(lat.toString());
+            setDropoffLongitude(lng.toString());
+        }
+    }
     return (
         <div className="border-4 border-blue-500 rounded-xl p-6 bg-gray-950 shadow-lg min-h-[600px]">
         <p>RIDER</p>
         <br></br>
         <p className="font-bold text-yellow-300">Active Trips: <br></br>{activeTripID}</p>
         <br></br>
-        <p>Pickup Coordinates</p>
-        <input type="text" inputMode="numeric" onChange={(e) => setPickupLatitude(e.target.value)} maxLength={10} placeholder="Pickup Latitude" />
-        <input type="text" inputMode="numeric" onChange={(e) => setPickupLongitude(e.target.value)} maxLength={10} placeholder="Pickup Longitude" />
-        <p>Dropoff Coordinates</p>
-        <input type="text" inputMode="numeric" onChange={(e) => setDropoffLatitude(e.target.value)} maxLength={10} placeholder="Dropoff Latitude" />
-        <input type="text" inputMode="numeric" onChange={(e) => setDropoffLongitude(e.target.value)} maxLength={10} placeholder="Dropoff Longitude" />
+        
+        {/**
+            <p>Pickup Coordinates</p>
+            <input type="text" inputMode="numeric" onChange={(e) => setPickupLatitude(e.target.value)} maxLength={10} placeholder="Pickup Latitude" />
+            <input type="text" inputMode="numeric" onChange={(e) => setPickupLongitude(e.target.value)} maxLength={10} placeholder="Pickup Longitude" />
+            <p>Dropoff Coordinates</p>
+            <input type="text" inputMode="numeric" onChange={(e) => setDropoffLatitude(e.target.value)} maxLength={10} placeholder="Dropoff Latitude" />
+            <input type="text" inputMode="numeric" onChange={(e) => setDropoffLongitude(e.target.value)} maxLength={10} placeholder="Dropoff Longitude" />
+        */}
+        <p className="font-bold text-blue-400" text-center>
+        {!pickupLatitude ? "Click Map to select Pickup" : !dropoffLatitude ? "Click Map to select Dropoff" : "Ready to Request Match!"}
+        </p>
+        <br></br>
+        <MapUI onMapClick={handleMapClick} markers={[
+            ...(pickupLatitude ? [{ latitude: parseFloat(pickupLatitude), longitude: parseFloat(pickupLongitude) }] : []),
+            ...(dropoffLatitude ? [{ latitude: parseFloat(dropoffLatitude), longitude: parseFloat(dropoffLongitude) }] : [])
+            ]}
+        />
+        <br></br>
+        <button className="cursor-pointer bg-blue-400 text-white p-2 rounded" onClick={() => { setPickupLatitude(""); setDropoffLatitude(""); }} disabled={!(status === "Connected")}> Clear Map </button>
+
         <br></br>
         <br></br>
         {!activeTripID && (
