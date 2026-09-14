@@ -110,15 +110,31 @@ export async function handleWebSocketMessage(ws: WebSocket, message: string): Pr
         try {
           const decoded = jwt.verify(received_message.payload, JWT_KEY) as { userId: string };
           active_connections.set(ws, decoded.userId);
-          const active_trip_id = await dispatchEngine.trip_exists(decoded.userId);
-          if (active_trip_id) {
-            ws.send(JSON.stringify({
+          const active_trip_data = await dispatchEngine.trip_exists(decoded.userId);
+          if (active_trip_data) {
+            if (decoded.userId === active_trip_data.driver_id) {
+              ws.send(JSON.stringify({
+                "type": "new_ride",
+                "payload": {
+                  "trip_id": active_trip_data.trip_id, 
+                  "rider_id": active_trip_data.rider_id,
+                  "pickup_latitude": active_trip_data.pickup_latitude, 
+                  "pickup_longitude": active_trip_data.pickup_longitude, 
+                  "dropoff_latitude": active_trip_data.dropoff_latitude, 
+                  "dropoff_longitude": active_trip_data.dropoff_longitude
+                }
+              }))
+            }
+            else if (decoded.userId === active_trip_data.rider_id) {
+              ws.send(JSON.stringify({
               "type": "match_found",
               "payload": {
-                "trip_id": active_trip_id.trip_id,
-                "driver_id": active_trip_id.driver_id
+                "trip_id": active_trip_data.trip_id,
+                "driver_id": active_trip_data.driver_id
               }
             }));
+            }
+            
           }
           ws.send(JSON.stringify({ status: "Success", message: "Authenticated Successfully!" }));
           console.log(`User ${decoded.userId} connected!`);

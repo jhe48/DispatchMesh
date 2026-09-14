@@ -17,8 +17,8 @@ import uuid
 class DispatchEngine:
     """Orchestrates rider-driver matching and trip lifecycle events."""
 
-    async def trip_exists(self, rider_id: str) -> str:
-        """Checks if rider has an existing trip.
+    async def trip_exists(self, user_id: str) -> str:
+        """Checks if user has an existing trip.
 
         Args:
             rider_id: rider ID to check against trips 
@@ -28,17 +28,22 @@ class DispatchEngine:
             conn = get_connection()
             cur = conn.cursor()
             cur.execute("""
-                SELECT trip_id, driver_id
+                SELECT trip_id, driver_id, rider_id, pickup_latitude, pickup_longitude, dropoff_latitude, dropoff_longitude
                 FROM Trips
-                WHERE rider_id = %s AND status IN %s
+                WHERE (rider_id = %s OR driver_id = %s) AND status IN %s
                 LIMIT 1;""",
-                (rider_id, ("matched", "en_route", "arrived", "in_progress")))
-            rider_has_trip = cur.fetchone()
-            if rider_has_trip:
-                print("Rider has an Active Trip!")
+                (user_id, user_id, ("matched", "en_route", "arrived", "in_progress")))
+            user_has_trip = cur.fetchone()
+            if user_has_trip:
+                print("User has an Active Trip!")
                 return {
-                    "trip_id": rider_has_trip[0], 
-                    "driver_id": rider_has_trip[1]
+                    "trip_id": user_has_trip[0], 
+                    "driver_id": user_has_trip[1],
+                    "rider_id": user_has_trip[2], 
+                    "pickup_latitude": user_has_trip[3], 
+                    "pickup_longitude": user_has_trip[4], 
+                    "dropoff_latitude": user_has_trip[5], 
+                    "dropoff_longitude": user_has_trip[6]
                     }
             return False
         except Exception as e:

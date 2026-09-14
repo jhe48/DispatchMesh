@@ -29,6 +29,7 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
     const [pickupLongitude, setPickupLongitude] = useState<number | null>(null);
     const [dropoffLatitude, setDropoffLatitude] = useState<number | null>(null);
     const [dropoffLongitude, setDropoffLongitude] = useState<number | null>(null);
+    const [activeTripID, setActiveTripID] = useState<string | null>(null);
 
     useEffect(() => {
         if (serverMessage?.type === "new_ride") {
@@ -37,6 +38,7 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
             setPickupLongitude(serverMessage?.payload?.pickup_longitude ?? null);
             setDropoffLatitude(serverMessage?.payload?.dropoff_latitude ?? null);
             setDropoffLongitude(serverMessage?.payload?.dropoff_longitude ?? null);
+            setActiveTripID(serverMessage?.payload?.trip_id ?? null);
         }
     }, [serverMessage]); 
 
@@ -64,7 +66,7 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
         <button className="disabled:cursor-not-allowed cursor-pointer bg-blue-800 text-white p-2 rounded" onClick={sendUpdatedLocation} disabled={!(status === "Connected")}>
             Update Location
         </button>
-        {serverMessage?.type == 'new_ride' && (
+        {activeTripID && (
             <div>
                 <br></br>
                 <p className="font-bold text-blue-500">New Ride for {newRider}!</p> 
