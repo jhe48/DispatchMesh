@@ -85,7 +85,7 @@ export default function DriverDashboard({ ws, status, serverMessage }: DriverDas
         <input type="text" inputMode="numeric" onChange={(e) => setUpdatedLongitude(parseFloat(e.target.value))} maxLength={10} placeholder="Update Longitude" />
         <br></br>
         <br></br>
-        <div className="font-bold text-blue-400" text-center>
+        <div className="font-bold text-blue-400" text-center="true">
         <br></br>
         <MapUI markers={[
             ...(updatedLatitude && updatedLongitude ? [{ latitude: updatedLatitude, longitude: updatedLongitude, type: "driver" as const }] : []),

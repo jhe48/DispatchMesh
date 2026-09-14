@@ -103,7 +103,7 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
             <input type="text" inputMode="numeric" onChange={(e) => setDropoffLatitude(e.target.value)} maxLength={10} placeholder="Dropoff Latitude" />
             <input type="text" inputMode="numeric" onChange={(e) => setDropoffLongitude(e.target.value)} maxLength={10} placeholder="Dropoff Longitude" />
         */}
-        <div className="font-bold text-blue-400" text-center>
+        <div className="font-bold text-blue-400" text-center="true">
         {!pickupLatitude ? "Click Map to select Pickup" : !dropoffLatitude ? "Click Map to select Dropoff" : "Ready to Request Match!"}
         <br></br>
         <MapUI onMapClick={handleMapClick} markers={[
