@@ -8,3 +8,4 @@ dist/
 *.pyc
 postman/
 .postman/
+*.tfstate
