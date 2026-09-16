@@ -7,9 +7,10 @@ import DriverDashboard from "./DriverPanel";
 interface UserPanelProps {
     role: string;
     token: string;
+    onNotification?: () => void;
 }
 
-export default function UserPanel({ role, token }: UserPanelProps) {
+export default function UserPanel({ role, token, onNotification }: UserPanelProps) {
   const [status, setStatus] = useState("Disconnected");
   const ws = useRef<WebSocket | null>(null);
   const [serverMessage, setServerMessage] = useState(null);
@@ -33,9 +34,11 @@ export default function UserPanel({ role, token }: UserPanelProps) {
       switch (data.type) {
         case "match_found":
           setServerMessage(data);
+          if (onNotification) onNotification();
           break;
         case "new_ride":
           setServerMessage(data);
+          if (onNotification) onNotification();
           break;
         case "driver_location":
           setServerMessage(data);

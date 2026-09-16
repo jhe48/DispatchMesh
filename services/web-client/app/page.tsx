@@ -7,6 +7,8 @@ export default function DispatchDashboard() {
   // Track active tab
   const [activeRiderIndex, setActiveRiderIndex] = useState(0);
   const [activeDriverIndex, setActiveDriverIndex] = useState(0);
+  const [notifiedRiders, setNotifiedRiders] = useState<number[]>([]);
+  const [notifiedDrivers, setNotifiedDrivers] = useState<number[]>([]);
 
   const riders = [
     { id: "testrider123", label: "Rider 1", token: process.env.NEXT_PUBLIC_TEST_RIDER_1_TOKEN },
@@ -34,9 +36,13 @@ export default function DispatchDashboard() {
                 key={rider.id}
                 onClick={() => {
                   setActiveRiderIndex(index);
+                  setNotifiedRiders(prev => prev.filter(i => i !== index));
                   setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
                 }}
-                className={`flex-1 px-4 py-2 rounded-t-lg ${activeRiderIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-700'}`}
+                className={`flex-1 px-4 py-2 rounded-t-lg ${
+                  activeRiderIndex === index ? 'bg-blue-500 text-white' 
+                  : notifiedRiders.includes(index) ? 'bg-green-500 animate-pulse text-white'
+                  : 'bg-gray-700'}`}
               >
                 {rider.label}
               </button>
@@ -45,7 +51,11 @@ export default function DispatchDashboard() {
 
           {riders.map((rider, index) => (
             <div key={rider.id} className={activeRiderIndex === index ? 'block' : 'hidden'}>
-              <UserPanel token={rider.token!} role="rider" />
+              <UserPanel 
+                token={rider.token!} 
+                role="rider" 
+                onNotification={() => setNotifiedRiders(prev => [...prev, index])}
+              />
             </div>
           ))}
         </div>
@@ -58,9 +68,13 @@ export default function DispatchDashboard() {
                 key={driver.id}
                 onClick={() => {
                   setActiveDriverIndex(index);
+                  setNotifiedDrivers(prev => prev.filter(i => i !== index));
                   setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
                 }}
-                className={`flex-1 px-4 py-2 rounded-t-lg ${activeDriverIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-700'}`}
+                className={`flex-1 px-4 py-2 rounded-t-lg ${
+                  activeDriverIndex === index ? 'bg-blue-500 text-white' 
+                  : notifiedDrivers.includes(index) ? 'bg-green-500 animate-pulse text-white'
+                  : 'bg-gray-700'}`}
               >
                 {driver.label}
               </button>
@@ -69,7 +83,11 @@ export default function DispatchDashboard() {
 
           {drivers.map((driver, index) => (
             <div key={driver.id} className={activeDriverIndex === index ? 'block' : 'hidden'}>
-              <UserPanel token={driver.token!} role="driver" />
+              <UserPanel 
+                token={driver.token!} 
+                role="driver" 
+                onNotification={() => setNotifiedDrivers(prev => [...prev, index])}
+              />
             </div>
           ))}
         </div>
