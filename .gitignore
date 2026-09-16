@@ -9,3 +9,6 @@ dist/
 postman/
 .postman/
 *.tfstate
+.terraform/
+*.tfstate.backup
+.terraform.lock.hcl
