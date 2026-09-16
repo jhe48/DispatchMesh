@@ -20,7 +20,7 @@ A real-time, distributed ride-share dispatch engine built from scratch using a m
 | **Backend** | Python, FastAPI, Pydantic |
 | **Database** | PostgreSQL + PostGIS (Spatial Queries) |
 | **Broker** | Redis Pub/Sub |
-| **DevOps** | Docker Compose, GitHub Actions CI/CD, AWS EC2 |
+| **DevOps** | Terraform, Docker Compose, GitHub Actions CI/CD, AWS EC2 |
 
 ---
 
@@ -69,7 +69,7 @@ flowchart TD
 - **Event-Driven Architecture**: Redis Pub/Sub decouples the matching engine from client delivery. Python publishes events; Node figures out who needs to hear them.
 - **PostGIS Spatial Matching**: `ST_Distance` finds the nearest available driver using real geographic math, not naive coordinate subtraction.
 - **Client State Hydration**: Active trips survive page refreshes. On WebSocket reconnect, the gateway queries the database and replays the appropriate event to restore the client's UI state.
-
+- **Infrastructure as Code (IaC)**: AWS EC2 servers and Security Groups are provisioned entirely via Terraform (`main.tf`), allowing cloud infrastructure to be version-controlled and rebuilt.
 ---
 
 ## Features
