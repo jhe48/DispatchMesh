@@ -27,7 +27,10 @@ export default function DispatchDashboard() {
           {riders.map((rider, index) => (
             <button
               key={rider.id}
-              onClick={() => setActiveRiderIndex(index)}
+              onClick={() => {
+                setActiveRiderIndex(index);
+                setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+              }}
               className={`px-4 py-2 rounded-t-lg ${activeRiderIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-700'}`}
             >
               {rider.label}
@@ -46,7 +49,10 @@ export default function DispatchDashboard() {
           {drivers.map((driver, index) => (
             <button
               key={driver.id}
-              onClick={() => setActiveDriverIndex(index)}
+              onClick={() => {
+                setActiveDriverIndex(index);
+                setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+              }}
               className={`px-4 py-2 rounded-t-lg ${activeDriverIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-700'}`}
             >
               {driver.label}
