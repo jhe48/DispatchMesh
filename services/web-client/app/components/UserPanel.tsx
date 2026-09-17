@@ -8,9 +8,10 @@ interface UserPanelProps {
     role: string;
     token: string;
     onNotification?: () => void;
+    onLog?: (msg: string) => void;
 }
 
-export default function UserPanel({ role, token, onNotification }: UserPanelProps) {
+export default function UserPanel({ role, token, onNotification, onLog }: UserPanelProps) {
   const [status, setStatus] = useState("Disconnected");
   const ws = useRef<WebSocket | null>(null);
   const [serverMessage, setServerMessage] = useState(null);
@@ -30,7 +31,7 @@ export default function UserPanel({ role, token, onNotification }: UserPanelProp
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-
+      if (onLog) onLog(`[${role.toUpperCase()}] Received: ${event.data}`);
       switch (data.type) {
         case "match_found":
           setServerMessage(data);
