@@ -4,7 +4,7 @@ A real-time, distributed ride-share dispatch engine built from scratch using a m
 
 > Riders request a ride by clicking a map. The system finds the nearest available driver using PostGIS spatial queries, matches them instantly via Redis Pub/Sub, and streams live updates to both parties over WebSockets.
 
-**[Live Demo →](#)** <!-- LINK COMING SOON -->
+**[Live Demo →](http://3.19.229.232:3001)** <!-- LINK COMING SOON -->
 
 <!-- Replace with a screen recording GIF of the full rider>driver flow -->
 
