@@ -89,12 +89,11 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
         }
     }
     return (
-        <div className="border-4 border-blue-500 rounded-xl p-6 bg-gray-950 shadow-lg min-h-[600px]">
-        <p>RIDER</p>
+        <div className="min-h-[600px] rounded-xl border border-emerald-300/20 bg-[#06110d]/90 p-4 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] sm:p-6">
+        <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4"><p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300">Rider channel</p><span className="rounded-full border border-emerald-300/20 px-2 py-1 text-[10px] text-emerald-300">{status}</span></div>
+        <div className="space-y-5">
+        <p className="mb-0 text-sm font-bold uppercase tracking-[0.18em] text-slate-300">Active trip <span className="ml-2 font-mono text-sm font-semibold normal-case text-emerald-200/80">{activeTripID || "No active trip"}</span></p>
         <br></br>
-        <p className="font-bold text-yellow-300">Active Trips: <br></br>{activeTripID}</p>
-        <br></br>
-        
         {/**
             <p>Pickup Coordinates</p>
             <input type="text" inputMode="numeric" onChange={(e) => setPickupLatitude(e.target.value)} maxLength={10} placeholder="Pickup Latitude" />
@@ -103,41 +102,36 @@ export default function RiderDashboard({ ws, status, serverMessage }: RiderDashb
             <input type="text" inputMode="numeric" onChange={(e) => setDropoffLatitude(e.target.value)} maxLength={10} placeholder="Dropoff Latitude" />
             <input type="text" inputMode="numeric" onChange={(e) => setDropoffLongitude(e.target.value)} maxLength={10} placeholder="Dropoff Longitude" />
         */}
-        <div className="font-bold text-blue-400" text-center="true">
+        <div className="rounded-xl border border-emerald-300/25 bg-emerald-300/[0.06] p-3 text-center text-sm font-semibold leading-relaxed tracking-wide text-emerald-200/80 shadow-[0_0_18px_rgba(110,231,183,0.08)]">
         {!pickupLatitude ? "Click Map to select Pickup" : !dropoffLatitude ? "Click Map to select Dropoff" : "Ready to Request Match!"}
-        <br></br>
-        <MapUI onMapClick={handleMapClick} markers={[
+        <div className="mt-4 overflow-hidden rounded-lg border border-white/10"><MapUI onMapClick={handleMapClick} markers={[
             ...(pickupLatitude && pickupLongitude ? [{ latitude: pickupLatitude, longitude: pickupLongitude, type: "pickup" as const }] : []),
             ...(dropoffLatitude && dropoffLongitude? [{ latitude: dropoffLatitude, longitude: dropoffLongitude, type: "dropoff" as const }] : []),
             ...(updatedLatitude && updatedLongitude ? [{ latitude: updatedLatitude, longitude: updatedLongitude, type: "driver" as const }] : [])
             ]}
-        />
+        /></div>
         </div>
-        <br></br>
         {!activeTripID && (
-            <button className="cursor-pointer bg-blue-400 text-white p-2 rounded" onClick={() => { setPickupLatitude(null); setDropoffLatitude(null); }} disabled={!(status === "Connected")}> Clear Map </button>
+            <button className="cursor-pointer rounded-lg border border-white/10 bg-white/10 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-white/15" onClick={() => { setPickupLatitude(null); setDropoffLatitude(null); }} disabled={!(status === "Connected")}> Clear Map </button>
         )}
 
-        <br></br>
-        <br></br>
         {!activeTripID && (
-            <button className="disabled:cursor-not-allowed cursor-pointer bg-green-500 text-black p-2 rounded" onClick={sendRequestMatch} disabled={!(status === "Connected")}>
+            <button className="disabled:cursor-not-allowed cursor-pointer rounded-lg bg-emerald-300 px-4 py-2 text-xs font-semibold text-[#03120c] shadow-[0_0_20px_rgba(110,231,183,0.2)] transition-transform hover:-translate-y-0.5 disabled:opacity-40" onClick={sendRequestMatch} disabled={!(status === "Connected")}>
             Request Match
             </button>
         )}
         {activeTripID && (
-            <p className="font-bold text-green-600">Match Found! Your Driver is: {assignedDriverID}</p>
+            <p className="rounded-lg border border-emerald-300/20 bg-emerald-300/10 p-3 text-xs font-semibold text-emerald-300">Match Found! Your Driver is: {assignedDriverID}</p>
         )}
-        <br></br>
-        <br></br>
         {activeTripID && (
-            <button className="disabled:cursor-not-allowed cursor-pointer bg-red-500 text-white p-2 rounded" onClick={sendCancelTrip} disabled={!(status === "Connected")}>
+            <button className="disabled:cursor-not-allowed cursor-pointer rounded-lg border border-red-300/20 bg-red-400/15 px-4 py-2 text-xs font-semibold text-red-200 transition-colors hover:bg-red-400/25 disabled:opacity-40" onClick={sendCancelTrip} disabled={!(status === "Connected")}>
             Cancel Trip
             </button>
         )}
         {serverMessage?.type == "cancel_trip" && (
             <p className="font-bold text-red-600">Cancelled Trip {serverMessage?.payload?.trip_id}</p>
         )}
+        </div>
         </div>
     );
 } 

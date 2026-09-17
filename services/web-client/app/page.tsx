@@ -25,73 +25,61 @@ export default function DispatchDashboard() {
     { id: "-5", label: "Driver 5", token: process.env.NEXT_PUBLIC_TEST_DRIVER_5_TOKEN }
   ]
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Dispatch Dashboard</h1>
-      {/* RIDER COLUMN */}
-      <div className="flex h-screen space-x-4">
-        <div className="w-1/2 p-8">
-          <div className="flex w-full">
+    <main className="min-h-screen overflow-x-hidden bg-[#020604] px-4 py-5 font-sans font-medium tracking-[0.01em] text-slate-300 sm:px-6 lg:px-10">
+      <div className="pointer-events-none fixed inset-0 -z-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,236,154,0.14),transparent_34%),linear-gradient(115deg,rgba(0,255,170,0.03),transparent_42%)]" />
+      <div className="relative z-10 mx-auto max-w-[1800px]">
+        <header className="mb-6 flex items-end justify-between border-b border-white/10 pb-5">
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-[-0.025em] text-white sm:text-3xl">Dispatch <span className="text-emerald-200/80">Dashboard</span></h1>
+          </div>
+        </header>
+        <div className="grid min-h-[calc(100vh-150px)] gap-5 lg:grid-cols-2">
+          {/* RIDER COLUMN */}
+          <section className="min-w-0 rounded-2xl border border-emerald-300/15 bg-white/[0.035] p-3 shadow-2xl shadow-emerald-950/20 backdrop-blur sm:p-5">
+            <div className="mb-4 flex w-full gap-1 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-1">
+              {riders.map((rider, index) => (
+                <button
+                  key={rider.id}
+                  onClick={() => {
+                    setActiveRiderIndex(index);
+                    setNotifiedRiders(prev => prev.filter(i => i !== index));
+                    setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+                  }}
+                  className={`min-w-[78px] flex-1 rounded-lg px-2 py-2 text-[11px] font-bold tracking-wide transition-colors duration-200 sm:px-3 ${
+                    activeRiderIndex === index ? 'bg-emerald-300 text-[#03120c] shadow-[0_0_18px_rgba(110,231,183,0.2)]' 
+                    : notifiedRiders.includes(index) ? 'animate-pulse bg-emerald-600/80 text-white'
+                    : 'text-slate-400 hover:bg-white/10 hover:text-white'}`}
+                >{rider.label}</button>
+              ))}
+            </div>
             {riders.map((rider, index) => (
-              <button
-                key={rider.id}
-                onClick={() => {
-                  setActiveRiderIndex(index);
-                  setNotifiedRiders(prev => prev.filter(i => i !== index));
-                  setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
-                }}
-                className={`flex-1 px-4 py-2 rounded-t-lg ${
-                  activeRiderIndex === index ? 'bg-blue-500 text-white' 
-                  : notifiedRiders.includes(index) ? 'bg-green-500 animate-pulse text-white'
-                  : 'bg-gray-700'}`}
-              >
-                {rider.label}
-              </button>
+              <div key={rider.id} className={activeRiderIndex === index ? 'block' : 'hidden'}><UserPanel token={rider.token!} role="rider" onNotification={() => setNotifiedRiders(prev => [...prev, index])} /></div>
             ))}
-          </div>
-
-          {riders.map((rider, index) => (
-            <div key={rider.id} className={activeRiderIndex === index ? 'block' : 'hidden'}>
-              <UserPanel 
-                token={rider.token!} 
-                role="rider" 
-                onNotification={() => setNotifiedRiders(prev => [...prev, index])}
-              />
+          </section>
+          {/* DRIVER COLUMN */}
+          <section className="min-w-0 rounded-2xl border border-amber-200/10 bg-white/[0.035] p-3 shadow-2xl shadow-amber-950/10 backdrop-blur sm:p-5">
+            <div className="mb-4 flex w-full gap-1 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-1">
+              {drivers.map((driver, index) => (
+                <button
+                  key={driver.id}
+                  onClick={() => {
+                    setActiveDriverIndex(index);
+                    setNotifiedDrivers(prev => prev.filter(i => i !== index));
+                    setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+                  }}
+                  className={`min-w-[78px] flex-1 rounded-lg px-2 py-2 text-[11px] font-bold tracking-wide transition-colors duration-200 sm:px-3 ${
+                    activeDriverIndex === index ? 'bg-amber-200 text-[#171006] shadow-[0_0_18px_rgba(253,230,138,0.16)]' 
+                    : notifiedDrivers.includes(index) ? 'animate-pulse bg-amber-500/80 text-white'
+                    : 'text-slate-400 hover:bg-white/10 hover:text-white'}`}
+                >{driver.label}</button>
+              ))}
             </div>
-          ))}
-        </div>
-
-        {/* DRIVER COLUMN */}
-        <div className="w-1/2 p-8">
-          <div className="flex w-full">
             {drivers.map((driver, index) => (
-              <button
-                key={driver.id}
-                onClick={() => {
-                  setActiveDriverIndex(index);
-                  setNotifiedDrivers(prev => prev.filter(i => i !== index));
-                  setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
-                }}
-                className={`flex-1 px-4 py-2 rounded-t-lg ${
-                  activeDriverIndex === index ? 'bg-blue-500 text-white' 
-                  : notifiedDrivers.includes(index) ? 'bg-green-500 animate-pulse text-white'
-                  : 'bg-gray-700'}`}
-              >
-                {driver.label}
-              </button>
+              <div key={driver.id} className={activeDriverIndex === index ? 'block' : 'hidden'}><UserPanel token={driver.token!} role="driver" onNotification={() => setNotifiedDrivers(prev => [...prev, index])} /></div>
             ))}
-          </div>
-
-          {drivers.map((driver, index) => (
-            <div key={driver.id} className={activeDriverIndex === index ? 'block' : 'hidden'}>
-              <UserPanel 
-                token={driver.token!} 
-                role="driver" 
-                onNotification={() => setNotifiedDrivers(prev => [...prev, index])}
-              />
-            </div>
-          ))}
+          </section>
         </div>
       </div>
-    </div>
+    </main>
   )
 }
